@@ -21,17 +21,6 @@ Lavaral環境構築
 7.php artisan db:seed  
 8.php artisan test  
 
-9.メール認証用の設定
-```
-MAIL_MAILER=smtp
-MAIL_HOST=mailhog
-MAIL_PORT=1025
-MAIL_USERNAME=null
-MAIL_PASSWORD=null
-MAIL_ENCRYPTION=null
-MAIL_FROM_ADDRESS=任意のメールアドレス
-MAIL_FROM_NAME="${APP_NAME}"
-```
 
 ### ログイン情報  
 一般ユーザー  
