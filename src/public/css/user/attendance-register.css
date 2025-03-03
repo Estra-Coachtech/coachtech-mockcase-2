@@ -1,0 +1,104 @@
+.attendance__content {
+    background: #F0EFF2;
+    height: 100vh;
+    margin: 0 auto;
+    max-width: 1540px;
+    padding: 50px;
+    padding-top: 150px;
+}
+
+.attendance__status,
+.attendance__form {
+    text-align: center;
+    width: 100%;
+}
+
+.attendance__status--item {
+    background: #C8C8C8;
+    border-radius: 50px;
+    color: #696969;
+    display: inline-block;
+    letter-spacing: 0.2em;
+    padding: 5px 20px;
+    text-align: center;
+}
+
+.current-date {
+    margin-top: 15px;
+}
+
+.current-time {
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+.current-date__item,
+.current-time__item {
+    background: none;
+    border: none;
+    outline: none;
+    text-align: center;
+    width: 100%;
+}
+
+.current-date__item {
+    font-size: 28px;
+}
+
+.current-time__item {
+    font-size: 48px;
+    font-weight: bold;
+}
+
+.attendance__button--submit--clock-in {
+    background: #000;
+    border: none;
+    border-radius: 20px;
+    color: #fff;
+    font-size: 20px;
+    font-weight: bold;
+    padding: 10px 20px;
+    width: 130px;
+}
+
+.attendance__button--submit--clock-out {
+    background: #000;
+    border: none;
+    border-radius: 20px;
+    color: #fff;
+    font-size: 20px;
+    font-weight: bold;
+    margin-right: 10px;
+    padding: 10px 20px;
+    width: 130px;
+}
+
+.attendance__button--submit--break-in {
+    background: #fff;
+    border: none;
+    border-radius: 20px;
+    color: #000;
+    font-size: 20px;
+    font-weight: bold;
+    margin-left: 10px;
+    padding: 10px 20px;
+    width: 130px;
+}
+
+.attendance__button--submit--break-out {
+    background: #fff;
+    border: none;
+    border-radius: 20px;
+    color: #000;
+    font-size: 20px;
+    font-weight: bold;
+    padding: 10px 20px;
+    width: 130px;
+}
+
+.attendance__message {
+    font-size: 16px;
+    font-weight: bold;
+    padding-top: 30px;
+    text-align: center;
+}

@@ -1,0 +1,119 @@
+.detail__content {
+    background: #F0EFF2;
+    margin: 0 auto;
+    max-width: 1540px;
+    padding: 50px;
+    padding-top: 50px;
+}
+
+.detail__header {
+    border-left: 7px solid #000;
+    margin: 0 auto;
+    margin-bottom: 45px;
+    max-width: 100vh;
+    padding-left: 5px;
+}
+
+.applied-form {
+    margin: 0 auto;
+    max-width: 100vh;
+}
+
+.applied-form__content {
+    background: #FFF;
+    border: 1px solid #E1E1E1;
+    border-radius: 10px;
+}
+
+.applied-form__group {
+    align-items: center;
+    display: flex;
+    height: 80px;
+}
+
+.applied-form__group:not(:last-of-type) {
+    border-bottom: 2px solid #E1E1E1;
+}
+
+.applied-form__header {
+    color: #737373;
+    font-weight: bold;
+    padding-left: 80px;
+    width: 30%;
+}
+
+.applied-form__input-group {
+    padding-right: 50px;
+    width: 40%;
+}
+
+.applied-form__input-group {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    margin: 0 auto;
+}
+
+.applied-form__input,
+.applied-form__textarea {
+    border: 1px solid #E1E1E1;
+    border-radius: 4px;
+    font-weight: bold;
+}
+
+.applied-form__input {
+    border: none;
+    height: 30px;
+    outline: none;
+    padding: 5px;
+    text-align: center;
+    width: 80px;
+}
+
+.applied-form__textarea {
+    border: none;
+    outline: none;
+    width: 100%;
+}
+
+.applied-form__textarea {
+    height: 50px;
+    padding: 5px;
+    resize: none;
+}
+
+.applied-form__text {
+    margin-top: 10px;
+    text-align: right;
+}
+
+.applied-form__text--item {
+    color: #FF0000;
+}
+
+.applied-form__button {
+    margin-top: 50px;
+    text-align: right;
+}
+
+.applied-form__button--submit {
+    background: #000;
+    border: none;
+    border-radius: 5px;
+    color: #FFF;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 5px 20px;
+}
+
+.applied-form__item {
+    background: #696969;
+    border: none;
+    border-radius: 5px;
+    color: #FFF;
+    display: inline-block;
+    font-size: 16px;
+    font-weight: bold;
+    margin-top: 0px;
+    padding: 7px 20px;
+}

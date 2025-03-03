@@ -1,0 +1,120 @@
+.attendance-list__content {
+    background: #F0EFF2;
+    height: 100vh;
+    margin: 0 auto;
+    max-width: 1540px;
+    padding: 50px;
+    padding-top: 50px;
+}
+
+.content__header {
+    border-left: 7px solid #000;
+    margin: 0 auto;
+    max-width: 100vh;
+    padding-left: 10px;
+}
+
+.content__menu,
+.table {
+    background: #FFF;
+    border-radius: 10px;
+    margin: 0 auto;
+    max-width: 100vh;
+    width: 100%;
+}
+
+.table {
+    color: #737373;
+}
+
+.content__menu {
+    align-items: center;
+    display: flex;
+    height: 60px;
+    justify-content: space-between;
+    margin-bottom: 40px;
+    padding: 10px;
+}
+
+.previous-month,
+.next-month,
+.current-month {
+    display: inline-block;
+}
+
+.previous-month,
+.next-month {
+    color: #737373;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.previous-month::before {
+    background: url('/images/arrow.png') no-repeat center;
+    background-size: contain;
+    content: '';
+    display: inline-block;
+    height: 13px;
+    opacity: 0.3;
+    width: 20px;
+}
+
+.current-month::before {
+    background: url('/images/calender.png') no-repeat center;
+    background-size: contain;
+    content: '';
+    display: inline-block;
+    height: 20px;
+    margin-right: 5px;
+    vertical-align: middle;
+    width: 20px;
+}
+
+.next-month-placeholder {
+    margin-left: 50px;
+}
+
+.next-month::after {
+    background: url('/images/arrow.png') no-repeat center;
+    background-size: contain;
+    content: '';
+    display: inline-block;
+    height: 13px;
+    opacity: 0.3;
+    transform: scale(-1, 1);
+    width: 20px;
+}
+
+.current-month {
+    font-weight: bold;
+    line-height: 40px;
+}
+
+.table__header {
+    border-bottom: 3px solid #E1E1E1;
+}
+
+.table__header--item {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.table__description {
+    text-align: center;
+}
+
+.table__description--item {
+    font-weight: 500;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.table__item--detail-link {
+    color: #000;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.table__row:not(:last-child) {
+    border-bottom: 2px solid #E1E1E1;
+}
