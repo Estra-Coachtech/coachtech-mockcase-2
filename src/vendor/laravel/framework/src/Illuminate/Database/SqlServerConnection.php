@@ -29,7 +29,7 @@ class SqlServerConnection extends Connection
     {
         for ($a = 1; $a <= $attempts; $a++) {
             if ($this->getDriverName() === 'sqlsrv') {
-                return parent::transaction($callback);
+                return parent::transaction($callback, $attempts);
             }
 
             $this->getPdo()->exec('BEGIN TRAN');
@@ -98,7 +98,7 @@ class SqlServerConnection extends Connection
      *
      * @throws \RuntimeException
      */
-    public function getSchemaState(Filesystem $files = null, callable $processFactory = null)
+    public function getSchemaState(?Filesystem $files = null, ?callable $processFactory = null)
     {
         throw new RuntimeException('Schema dumping is not supported when using SQL Server.');
     }

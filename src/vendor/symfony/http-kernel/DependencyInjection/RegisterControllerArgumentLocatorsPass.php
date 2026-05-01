@@ -24,6 +24,7 @@ use Symfony\Component\DependencyInjection\LazyProxy\ProxyHelper;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\DependencyInjection\TypedReference;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 /**
@@ -69,6 +70,7 @@ class RegisterControllerArgumentLocatorsPass implements CompilerPassInterface
         foreach ($container->findTaggedServiceIds($this->controllerTag, true) as $id => $tags) {
             $def = $container->getDefinition($id);
             $def->setPublic(true);
+            $def->setLazy(false);
             $class = $def->getClass();
             $autowire = $def->isAutowired();
             $bindings = $def->getBindings();
@@ -174,7 +176,7 @@ class RegisterControllerArgumentLocatorsPass implements CompilerPassInterface
                         $invalidBehavior = ContainerInterface::RUNTIME_EXCEPTION_ON_INVALID_REFERENCE;
                     }
 
-                    if (Request::class === $type || SessionInterface::class === $type) {
+                    if (Request::class === $type || SessionInterface::class === $type || Response::class === $type) {
                         continue;
                     }
 

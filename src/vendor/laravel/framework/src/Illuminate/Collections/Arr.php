@@ -180,7 +180,7 @@ class Arr
      * @param  mixed  $default
      * @return mixed
      */
-    public static function first($array, callable $callback = null, $default = null)
+    public static function first($array, ?callable $callback = null, $default = null)
     {
         if (is_null($callback)) {
             if (empty($array)) {
@@ -209,7 +209,7 @@ class Arr
      * @param  mixed  $default
      * @return mixed
      */
-    public static function last($array, callable $callback = null, $default = null)
+    public static function last($array, ?callable $callback = null, $default = null)
     {
         if (is_null($callback)) {
             return empty($array) ? value($default) : end($array);
@@ -510,7 +510,7 @@ class Arr
      * Get a value from the array, and remove it.
      *
      * @param  array  $array
-     * @param  string  $key
+     * @param  string|int  $key
      * @param  mixed  $default
      * @return mixed
      */

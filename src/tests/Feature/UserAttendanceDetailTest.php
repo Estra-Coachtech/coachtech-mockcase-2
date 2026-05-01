@@ -23,10 +23,10 @@ class UserAttendanceDetailTest extends TestCase
     /** @test */
     public function it_displays_logged_in_user_name_on_attendance_detail_page()
     {
-        $user = User::all()->random();
+        // 勤怠記録を持つユーザーを必ず選ぶ（記録のないユーザーが選ばれると null pointer になるため）
+        $attendanceRecord = AttendanceRecord::with('user', 'breaks')->whereHas('breaks')->first();
+        $user = $attendanceRecord->user;
         $this->actingAs($user);
-
-        $attendanceRecord = AttendanceRecord::where('user_id', $user->id)->first();
 
         $response = $this->get('/attendance');
 
@@ -39,10 +39,10 @@ class UserAttendanceDetailTest extends TestCase
     /** @test */
     public function it_displays_selected_date_on_attendance_detail_page()
     {
-        $user = User::all()->random();
+        // 勤怠記録を持つユーザーを必ず選ぶ（記録のないユーザーが選ばれると null pointer になるため）
+        $attendanceRecord = AttendanceRecord::with('user', 'breaks')->whereHas('breaks')->first();
+        $user = $attendanceRecord->user;
         $this->actingAs($user);
-
-        $attendanceRecord = AttendanceRecord::where('user_id', $user->id)->first();
 
         $response = $this->get('/attendance');
 
@@ -55,10 +55,10 @@ class UserAttendanceDetailTest extends TestCase
     /** @test */
     public function it_displays_correct_break_time_for_logged_in_user()
     {
-        $user = User::all()->random();
+        // 勤怠記録を持つユーザーを必ず選ぶ（記録のないユーザーが選ばれると null pointer になるため）
+        $attendanceRecord = AttendanceRecord::with('user', 'breaks')->whereHas('breaks')->first();
+        $user = $attendanceRecord->user;
         $this->actingAs($user);
-
-        $attendanceRecord = AttendanceRecord::where('user_id', $user->id)->first();
 
         $response = $this->get('/attendance');
 
@@ -72,10 +72,10 @@ class UserAttendanceDetailTest extends TestCase
     /** @test */
     public function it_should_navigate_to_attendance_detail_page_when_detail_button_is_cked()
     {
-        $user = User::all()->random();
+        // 勤怠記録を持つユーザーを必ず選ぶ（記録のないユーザーが選ばれると null pointer になるため）
+        $attendanceRecord = AttendanceRecord::with('user', 'breaks')->whereHas('breaks')->first();
+        $user = $attendanceRecord->user;
         $this->actingAs($user);
-
-        $attendanceRecord = AttendanceRecord::where('user_id', $user->id)->first();
 
         $response = $this->get('/attendance');
 

@@ -472,7 +472,7 @@ class Request extends SymfonyRequest implements Arrayable, ArrayAccess
      *
      * @return static
      */
-    public function duplicate(array $query = null, array $request = null, array $attributes = null, array $cookies = null, array $files = null, array $server = null)
+    public function duplicate(?array $query = null, ?array $request = null, ?array $attributes = null, ?array $cookies = null, ?array $files = null, ?array $server = null)
     {
         return parent::duplicate($query, $request, $attributes, $cookies, $this->filterFiles($files), $server);
     }
@@ -669,8 +669,10 @@ class Request extends SymfonyRequest implements Arrayable, ArrayAccess
     #[\ReturnTypeWillChange]
     public function offsetExists($offset)
     {
+        $route = $this->route();
+
         return Arr::has(
-            $this->all() + $this->route()->parameters(),
+            $this->all() + ($route ? $route->parameters() : []),
             $offset
         );
     }

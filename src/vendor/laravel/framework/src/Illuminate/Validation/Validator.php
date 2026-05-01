@@ -516,7 +516,7 @@ class Validator implements ValidatorContract
      * @param  array|null  $keys
      * @return \Illuminate\Support\ValidatedInput|array
      */
-    public function safe(array $keys = null)
+    public function safe(?array $keys = null)
     {
         return is_array($keys)
                 ? (new ValidatedInput($this->validated()))->only($keys)
@@ -867,6 +867,8 @@ class Validator implements ValidatorContract
             $this->passes();
         }
 
+        $attributeWithPlaceholders = $attribute;
+
         $attribute = str_replace(
             [$this->dotPlaceholder, '__asterisk__'],
             ['.', '*'],
@@ -878,7 +880,7 @@ class Validator implements ValidatorContract
         }
 
         $this->messages->add($attribute, $this->makeReplacements(
-            $this->getMessage($attribute, $rule), $attribute, $rule, $parameters
+            $this->getMessage($attributeWithPlaceholders, $rule), $attribute, $rule, $parameters
         ));
 
         $this->failedRules[$attribute][$rule] = $parameters;
@@ -1351,7 +1353,7 @@ class Validator implements ValidatorContract
      * @param  callable|null  $formatter
      * @return $this
      */
-    public function setImplicitAttributesFormatter(callable $formatter = null)
+    public function setImplicitAttributesFormatter(?callable $formatter = null)
     {
         $this->implicitAttributesFormatter = $formatter;
 

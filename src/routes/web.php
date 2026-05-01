@@ -5,6 +5,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\MiddlewareController;
+use App\Http\Controllers\ReportController;
 use App\Http\Middleware\AdminStatusMiddleware;
 use Laravel\Fortify\Http\Controllers\VerifyEmailController;
 use Illuminate\Http\Request;
@@ -27,6 +28,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/attendance', [UserController::class, 'attendance']);
     Route::get('/attendance/list', [UserController::class, 'list']);
     Route::get('/application/{id}', [UserController::class, 'applicationDetail']);
+
+    // ★ マイ勤怠レポート（応用）
+    Route::get('/attendance/report', [ReportController::class, 'index'])->name('attendance.report');
 });
 
 Route::middleware(['auth'])->group(function () {

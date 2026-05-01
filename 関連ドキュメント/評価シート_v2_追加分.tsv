@@ -1,0 +1,29 @@
+公開API	公開API	routes/api.php に API v1 のルートが定義されているか。（応用）	1	FALSE	0
+公開API	公開API	GET /api/v1/attendance-records にて、HTTP 200 が返り、JSON の data に勤怠一覧と meta 情報（current_page, last_page, per_page, total）が含まれるか。（応用）	1	FALSE	0
+公開API	公開API	GET /api/v1/attendance-records にて、user_id・date・month パラメータで検索・絞り込みが動作するか。（応用）	1	FALSE	0
+公開API	公開API	GET /api/v1/attendance-records にて、per_page・page を指定したときに、ページごとに正しい件数（デフォルト20、最大100）のデータが取得できるか。（応用）	1	FALSE	0
+公開API	公開API	GET /api/v1/attendance-records/{attendanceRecord} にて、存在する ID で勤怠詳細(休憩・修正申請含む)が JSON で返されるか。（応用）	1	FALSE	0
+公開API	公開API	GET /api/v1/attendance-records/{attendanceRecord} にて、存在しない ID で 404 と { "error": "勤怠情報が見つかりませんでした。" } が返るか。（応用）	1	FALSE	0
+公開API	公開API	POST /api/v1/attendance-records にて、正常なデータでリクエストすると 201 が返り、attendance_records テーブルにデータが保存されるか。（応用）	2	FALSE	0
+公開API	公開API	POST /api/v1/attendance-records にて、不正データで送信すると 422 と日本語のエラーメッセージが返るか。（応用）	1	FALSE	0
+公開API	公開API	PUT /api/v1/attendance-records/{attendanceRecord} にて、正しいデータで更新したときに 200 が返り、attendance_records テーブルのレコードが正しく更新されるか。（応用）	1	FALSE	0
+公開API	公開API	PUT /api/v1/attendance-records/{attendanceRecord} にて、存在しない ID を更新したときに 404 と { "error": "勤怠情報が見つかりませんでした。" } が返るか。（応用）	1	FALSE	0
+公開API	公開API	PUT /api/v1/attendance-records/{attendanceRecord} にて、不正データで送信すると 422 と日本語のエラーメッセージが返るか。（応用）	1	FALSE	0
+公開API	公開API	DELETE /api/v1/attendance-records/{attendanceRecord} にて、勤怠を削除したとき 204 が返り、attendance_records テーブルから該当レコードが削除されるか。（応用）	1	FALSE	0
+公開API	公開API	DELETE /api/v1/attendance-records/{attendanceRecord} にて、存在しない ID を削除したときに 404 と { "error": "勤怠情報が見つかりませんでした。" } が返るか。（応用）	1	FALSE	0
+公開API	公開API	Web 用コントローラーとは別に API 用コントローラー(Api\V1 名前空間)が作成されているか。（応用）	1	FALSE	0
+公開API	公開API	AttendanceRecordResource を使用して API のレスポンスが整形されているか。（応用）	1	FALSE	0
+公開API	公開API	API 用の FormRequest(Api\V1 名前空間)でバリデーションが実装されているか。（応用）	1	FALSE	0
+公開API	公開API	Sanctum を導入し、書き込み系 API(POST/PUT/DELETE)に auth:sanctum ミドルウェアが適用されているか。（応用）	2	FALSE	0
+公開API	公開API	API 書き込み系エンドポイント(POST/PUT/DELETE /api/v1/attendance-records)において、AttendanceRecordPolicy による認可が適用され、本人のみが更新・削除でき、他ユーザーが操作した際に 403 が返るか。（応用）	2	FALSE	0
+CLI / DB	テスト	公開API 読み取り系(GET /api/v1/attendance-records, /api/v1/attendance-records/{attendanceRecord})において、JSON 一覧取得・詳細取得・404 とエラー JSON が返るかを検証する Feature Tests が実装されパスしているか。（応用）	1	FALSE	0
+CLI / DB	テスト	公開API 書き込み系(POST/PUT/DELETE /api/v1/attendance-records)において、201/200/204 レスポンス・DB 反映・404・バリデーションエラー(422)を検証する Feature Tests が実装されパスしているか。（応用）	1	FALSE	0
+CLI / DB	テスト	Sanctum 認証テストにおいて、Sanctum::actingAs() でテスト用ユーザー認証を行い、未認証時に書き込み系 API が 401 を返し、認証時に 200/201/204 が返り、他ユーザー操作時に 403 が返ることを検証する Feature Tests が実装されパスしているか。（応用）	2	FALSE	0
+PHP/Laravel	マイ勤怠レポート機能	/attendance/report にアクセスした際に、認証必須で、基本サマリー(総労働時間・総残業時間・平均労働時間・平均残業時間)が正しく表示されるか。（応用）	2	FALSE	0
+PHP/Laravel	マイ勤怠レポート機能	月次推移(過去6ヶ月の労働時間・残業時間)が正しく表示されるか。（応用）	2	FALSE	0
+PHP/Laravel	マイ勤怠レポート機能	異常検知(遅刻・早退・長時間労働の月内発生回数)が正しく表示されるか。（応用）	2	FALSE	0
+CLI / DB	テスト	マイ勤怠レポートテストにおいて、ゲストはリダイレクトされ、認証ユーザーの統計情報(summary, monthly_trend, anomalies)が正しく計算され、勤怠記録がないユーザーの場合、各統計が 0/空として安全に処理されることを検証する Feature Tests が実装されパスしているか。（応用）	2	FALSE	0
+CLI / DB	コード品質	全メソッドに引数と戻り値の型宣言がされているか(コントローラ、モデル、FormRequest、Policy)(モデルのリレーションメソッドには HasMany, BelongsTo, BelongsToMany などの具体的な戻り値型)。（応用）	2	FALSE	0
+CLI / DB	コード品質	主要なメソッドに処理内容、引数、戻り値を説明する PHPDoc コメントが記述されているか。（応用）	2	FALSE	0
+CLI / DB	コード品質	Collection メソッド(foreach などのループを避け、map, filter, groupBy, flatMap 等)が効果的に使用されているか(特にマイ勤怠レポート機能)。（応用）	2	FALSE	0
+CLI / DB	コード品質	勤怠一覧取得等において、Eager Loading(with メソッド等)を使用して、N+1 問題が防止されているか。（応用）	2	FALSE	0

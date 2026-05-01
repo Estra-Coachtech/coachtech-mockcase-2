@@ -1,0 +1,11 @@
+# Docker (ローカル専用データ。リモートには含めない)
+docker/mysql/data/
+docker-compose.override.yml
+
+# 環境変数（機密情報）
+.env
+
+# OS / Editor
+.DS_Store
+.idea/
+.vscode/

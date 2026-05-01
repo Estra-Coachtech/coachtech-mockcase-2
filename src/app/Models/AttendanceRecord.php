@@ -4,7 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\AttendanceBreak;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class AttendanceRecord extends Model
 {
@@ -17,7 +18,7 @@ class AttendanceRecord extends Model
         'clock_out',
         'total_time',
         'total_break_time',
-        'comment'
+        'comment',
     ];
 
     protected $casts = [
@@ -28,17 +29,26 @@ class AttendanceRecord extends Model
         'total_break_time'  => 'string',
     ];
 
-    public function user()
+    /**
+     * 勤怠の所有ユーザー。
+     */
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function applications()
+    /**
+     * この勤怠に対する修正申請。
+     */
+    public function applications(): HasMany
     {
         return $this->hasMany(Application::class);
     }
 
-    public function breaks()
+    /**
+     * この勤怠に紐づく休憩レコード。
+     */
+    public function breaks(): HasMany
     {
         return $this->hasMany(AttendanceBreak::class);
     }
