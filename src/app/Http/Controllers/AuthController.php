@@ -72,7 +72,7 @@ class AuthController extends Controller
             'email' => 'メール認証が必要です。認証メールを再送信しました。'
             ]);
         }
-        return redirect()->intended('/login');
+        return redirect()->intended('/attendance');
     }
 
     return redirect()->back()->withErrors([

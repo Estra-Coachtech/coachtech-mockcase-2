@@ -44,12 +44,18 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function attendanceRecords()
+    /**
+     * このユーザーの勤怠レコード。
+     */
+    public function attendanceRecords(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(AttendanceRecord::class);
     }
 
-    public function applications()
+    /**
+     * このユーザーが行った修正申請。
+     */
+    public function applications(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Application::class);
     }

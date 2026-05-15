@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class UsersTableSeeder extends Seeder
@@ -14,28 +15,36 @@ class UsersTableSeeder extends Seeder
      */
     public function run()
     {
+        // シーディングで作成するユーザーはメール認証済みとして扱う
+        // （AuthController::doLogin で hasVerifiedEmail チェックがあるため、
+        // email_verified_at が NULL のままだとログインできない）
+        $now = Carbon::now();
+
         $users = [
             [
                 'name' => 'ユーザー１',
                 'email' => 'user1@example.com',
+                'email_verified_at' => $now,
                 'password' => bcrypt('password'),
                 'admin_status' => false,
-                'attendance_status' => '勤務外'
+                'attendance_status' => '勤務外',
             ],
             [
                 'name' => 'ユーザー２',
                 'email' => 'user2@example.com',
+                'email_verified_at' => $now,
                 'password' => bcrypt('password'),
                 'admin_status' => false,
-                'attendance_status' => '勤務外'
+                'attendance_status' => '勤務外',
             ],
             [
                 'name' => 'ユーザー３',
                 'email' => 'user3@example.com',
+                'email_verified_at' => $now,
                 'password' => bcrypt('password'),
                 'admin_status' => true,
-                'attendance_status' => '勤務外'
-            ]
+                'attendance_status' => '勤務外',
+            ],
         ];
 
         foreach ($users as $user) {

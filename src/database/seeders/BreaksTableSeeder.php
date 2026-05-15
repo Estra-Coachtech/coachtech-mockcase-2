@@ -19,7 +19,9 @@ class BreaksTableSeeder extends Seeder
     {
         $faker = Faker::create();
 
-        AttendanceRecord::all()->each(function (AttendanceRecord $record) use ($faker) {
+        // user1 のレコードは AttendanceRecordsTableSeeder で固定休憩 (12:00-13:00) を
+        // 既に付与しているため、ここでは休憩がまだ無いレコード（user2/user3 のランダム）のみに付与する。
+        AttendanceRecord::query()->whereDoesntHave('breaks')->each(function (AttendanceRecord $record) use ($faker) {
             $clockIn  = Carbon::parse($record->clock_in);
             $clockOut = Carbon::parse(
                 $record->clock_out ?? $clockIn->copy()->addHours(8)

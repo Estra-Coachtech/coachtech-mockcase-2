@@ -26,9 +26,9 @@ class AdminAttendanceDetailTest extends TestCase
         $admin = User::where('admin_status', true)->first();
         $this->actingAs($admin);
 
-        $user = User::all()->random();
-
-        $attendanceRecord = AttendanceRecord::where('user_id', $user->id)->first();
+        // 勤怠記録を持つユーザーを必ず選ぶ（記録のないユーザーが選ばれると null pointer になるため）
+        $attendanceRecord = AttendanceRecord::with('user')->first();
+        $user = $attendanceRecord->user;
 
         $response = $this->get('/admin/attendance/list');
 
@@ -44,9 +44,9 @@ class AdminAttendanceDetailTest extends TestCase
         $admin = User::where('admin_status', true)->first();
         $this->actingAs($admin);
 
-        $user = User::all()->random();
-
-        $attendanceRecord = AttendanceRecord::where('user_id', $user->id)->first();
+        // 勤怠記録を持つユーザーを必ず選ぶ（記録のないユーザーが選ばれると null pointer になるため）
+        $attendanceRecord = AttendanceRecord::with('user')->first();
+        $user = $attendanceRecord->user;
 
         $response = $this->get('/admin/attendance');
 
@@ -68,9 +68,9 @@ class AdminAttendanceDetailTest extends TestCase
         $admin = User::where('admin_status', true)->first();
         $this->actingAs($admin);
 
-        $user = User::all()->random();
-
-        $attendanceRecord = AttendanceRecord::where('user_id', $user->id)->first();
+        // 勤怠記録を持つユーザーを必ず選ぶ（記録のないユーザーが選ばれると null pointer になるため）
+        $attendanceRecord = AttendanceRecord::with('user')->first();
+        $user = $attendanceRecord->user;
 
         $response = $this->get('/admin/attendance');
 
@@ -94,9 +94,9 @@ class AdminAttendanceDetailTest extends TestCase
         $admin = User::where('admin_status', true)->first();
         $this->actingAs($admin);
 
-        $user = User::all()->random();
-
-        $attendanceRecord = AttendanceRecord::where('user_id', $user->id)->first();
+        // 勤怠記録を持つユーザーを必ず選ぶ（記録のないユーザーが選ばれると null pointer になるため）
+        $attendanceRecord = AttendanceRecord::with('user')->first();
+        $user = $attendanceRecord->user;
 
         $response = $this->get('/admin/attendance');
 
@@ -120,9 +120,9 @@ class AdminAttendanceDetailTest extends TestCase
         $admin = User::where('admin_status', true)->first();
         $this->actingAs($admin);
 
-        $user = User::all()->random();
-
-        $attendanceRecord = AttendanceRecord::where('user_id', $user->id)->first();
+        // 勤怠記録を持つユーザーを必ず選ぶ（記録のないユーザーが選ばれると null pointer になるため）
+        $attendanceRecord = AttendanceRecord::with('user')->first();
+        $user = $attendanceRecord->user;
 
         $response = $this->get('/admin/attendance');
 
