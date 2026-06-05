@@ -7,7 +7,7 @@
 @section('content')
     <div class="detail__content">
         <div class="detail__header">
-            <h2 class="content__header--item">勤怠詳細</h2>
+            <h1 class="content__header--item">勤怠詳細</h1>
         </div>
         <form class="form" action="{{ url('/attendance/' . $attendanceRecord['id']) }}" method="post">
             @csrf
@@ -22,8 +22,9 @@
                     <div class="form__group">
                         <p class="form__header">日付</p>
                         <div class="form__input-group">
-                            <input class="form__input" type="text" name="new_date" value="{{ $attendanceRecord['year'] }}">
-                            <input class="form__input" type="text" name="new_date" value="{{ $attendanceRecord['date'] }}">
+                            {{-- 日付は表示のみ（修正不可） --}}
+                            <input class="form__input" type="text" value="{{ $attendanceRecord['year'] }}" readonly>
+                            <input class="form__input" type="text" name="new_date" value="{{ $attendanceRecord['date'] }}" readonly>
                         </div>
                     </div>
 
@@ -50,27 +51,30 @@
                         </div>
                     </div>
 
-                    <div class="form__group form__break-group">
-                        <p class="form__header">休憩</p>
-                        <div class="form__input-wrapper">
-                            @if (isset($attendanceRecord['breaks']) && is_array($attendanceRecord['breaks']) && count($attendanceRecord['breaks']) > 0)
-                                @foreach($attendanceRecord['breaks'] as $break)
-                                    <div class="form__input-group">
-                                        <input class="form__input" type="text" name="new_break_in[]"
-                                            value="{{ $break['break_in'] ?? '' }}">
-                                        <p>〜</p>
-                                        <input class="form__input" type="text" name="new_break_out[]"
-                                            value="{{ $break['break_out'] ?? '' }}">
-                                    </div>
-                                @endforeach
-                            @endif
-
-                            {{-- 空の入力行を1つ追加（ユーザーが追加できるように） --}}
+                    {{-- 休憩は「休憩」「休憩1」「休憩2」…とセクションを分けて表示 --}}
+                    @php
+                        $breaks = (isset($attendanceRecord['breaks']) && is_array($attendanceRecord['breaks']))
+                            ? $attendanceRecord['breaks'] : [];
+                    @endphp
+                    @foreach($breaks as $index => $break)
+                        <div class="form__group">
+                            <p class="form__header">{{ $index === 0 ? '休憩' : '休憩' . $index }}</p>
                             <div class="form__input-group">
-                                <input class="form__input" type="text" name="new_break_in[]" value="">
+                                <input class="form__input" type="text" name="new_break_in[]"
+                                    value="{{ $break['break_in'] ?? '' }}">
                                 <p>〜</p>
-                                <input class="form__input" type="text" name="new_break_out[]" value="">
+                                <input class="form__input" type="text" name="new_break_out[]"
+                                    value="{{ $break['break_out'] ?? '' }}">
                             </div>
+                        </div>
+                    @endforeach
+                    {{-- 新しい休憩を追加できるよう末尾に空欄を1つ用意 --}}
+                    <div class="form__group">
+                        <p class="form__header">{{ count($breaks) === 0 ? '休憩' : '休憩' . count($breaks) }}</p>
+                        <div class="form__input-group">
+                            <input class="form__input" type="text" name="new_break_in[]" value="">
+                            <p>〜</p>
+                            <input class="form__input" type="text" name="new_break_out[]" value="">
                         </div>
                     </div>
 

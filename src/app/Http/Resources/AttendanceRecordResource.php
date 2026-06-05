@@ -26,8 +26,13 @@ class AttendanceRecordResource extends JsonResource
             'date' => $this->date instanceof \DateTimeInterface
                 ? $this->date->format('Y-m-d')
                 : $this->date,
-            'clock_in' => $this->clock_in,
-            'clock_out' => $this->clock_out,
+            // API 仕様書に合わせ、時刻は H:i:s 文字列で返す（datetime キャストの ISO 文字列ではなく）
+            'clock_in' => $this->clock_in instanceof \DateTimeInterface
+                ? $this->clock_in->format('H:i:s')
+                : $this->clock_in,
+            'clock_out' => $this->clock_out instanceof \DateTimeInterface
+                ? $this->clock_out->format('H:i:s')
+                : $this->clock_out,
             'total_time' => $this->total_time,
             'total_break_time' => $this->total_break_time,
             'comment' => $this->comment,

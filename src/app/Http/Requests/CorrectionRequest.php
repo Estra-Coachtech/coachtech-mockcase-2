@@ -11,7 +11,7 @@ class CorrectionRequest extends FormRequest
      *
      * @return bool
      */
-    public function authorize()
+    public function authorize(): bool
     {
         return true;
     }
@@ -21,7 +21,7 @@ class CorrectionRequest extends FormRequest
      *
      * @return array
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             'new_clock_in'  => 'required|date_format:H:i',
@@ -38,7 +38,7 @@ class CorrectionRequest extends FormRequest
         ];
     }
 
-    public function messages()
+    public function messages(): array
     {
         return [
             'new_clock_in.required'    => '出勤時間を入力してください。',
@@ -48,12 +48,12 @@ class CorrectionRequest extends FormRequest
             'new_clock_out.after'      => '出勤時間もしくは退勤時間が不適切な値です。',
 
             'new_break_in.*.date_format'  => '休憩開始は「HH:mm」形式で入力してください。',
-            'new_break_in.*.before'       => '休憩時間が勤務時間外です。',
-            'new_break_in.*.after'        => '休憩時間が勤務時間外です。',
+            'new_break_in.*.before'       => '休憩時間が不適切な値です。',
+            'new_break_in.*.after'        => '休憩時間が不適切な値です。',
 
             'new_break_out.*.date_format' => '休憩終了は「HH:mm」形式で入力してください。',
-            'new_break_out.*.before'      => '休憩時間が勤務時間外です。',
-            'new_break_out.*.after'       => '休憩時間が勤務時間外です。',
+            'new_break_out.*.before'      => '休憩時間もしくは退勤時間が不適切な値です',
+            'new_break_out.*.after'       => '休憩時間もしくは退勤時間が不適切な値です',
 
             'comment.required' => '備考を記入してください。',
         ];

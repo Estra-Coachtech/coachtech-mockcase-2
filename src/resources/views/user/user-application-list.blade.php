@@ -7,7 +7,7 @@
 @section('content')
 <div class="application-list__content">
     <div class="content__header">
-        <h2 class="content__header--item">申請一覧</h2>
+        <h1 class="content__header--item">申請一覧</h1>
     </div>
     <div class="application__tab">
         <input class="application__tab--input" id="tab1" type="radio" name="tab_item" checked>

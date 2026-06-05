@@ -3,7 +3,6 @@
 namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use App\Models\User;
 use App\Models\AttendanceRecord;
@@ -64,7 +63,7 @@ class UserAttendanceCorrectionTest extends TestCase
         ]);
 
         $response->assertSessionHasErrors(['new_break_in.0']);
-        $this->assertContains('休憩時間が勤務時間外です。', session('errors')->get('new_break_in.0'));
+        $this->assertContains('休憩時間が不適切な値です。', session('errors')->get('new_break_in.0'));
     }
 
     /** @test */
@@ -88,7 +87,7 @@ class UserAttendanceCorrectionTest extends TestCase
         ]);
 
         $response->assertSessionHasErrors(['new_break_out.0']);
-        $this->assertContains('休憩時間が勤務時間外です。', session('errors')->get('new_break_out.0'));
+        $this->assertContains('休憩時間もしくは退勤時間が不適切な値です', session('errors')->get('new_break_out.0'));
     }
 
     /** @test */
@@ -158,29 +157,34 @@ class UserAttendanceCorrectionTest extends TestCase
     /** @test */
     public function it_displays_all_requests_in_pending_status_for_logged_in_user()
     {
-        $user = User::all()->random();
+        $user = User::where('admin_status', false)->first();
         $this->actingAs($user);
 
-        $attendanceRecord = AttendanceRecord::where('user_id', $user->id)->first();
+        // 同一ユーザーの2件の勤怠に対して修正申請を行う
+        $records = AttendanceRecord::where('user_id', $user->id)->take(2)->get();
+        $this->assertCount(2, $records);
 
-        $response = $this->get('/attendance');
-
-        $response = $this->get('/attendance/' . $attendanceRecord->id);
-
-        $response = $this->post('/attendance/' . $attendanceRecord->id, [
-            'new_clock_in' => '9:00',
-            'new_clock_out' => '15:00',
-            'comment' => 'テストコメント',
-        ]);
-
-        $response->assertStatus(302);
+        foreach ($records as $i => $record) {
+            $this->post('/attendance/' . $record->id, [
+                'new_date' => Carbon::parse($record->date)->format('n月j日'),
+                'new_clock_in' => '09:00',
+                'new_clock_out' => '18:00',
+                'comment' => "申請理由{$i}",
+            ]);
+        }
 
         $response = $this->get('/stamp_correction_request/list');
         $response->assertStatus(200);
 
-        $records = Application::whereHas('attendanceRecord', function($query) use ($user) {
-            $query->where('user_id', $user->id);
-        })->where('approval_status', '承認待ち')->get();
+        // 自分の申請がすべて「承認待ち」一覧に表示されている
+        $response->assertSee('承認待ち');
+        $response->assertSee('申請理由0');
+        $response->assertSee('申請理由1');
+
+        $this->assertSame(
+            2,
+            Application::where('user_id', $user->id)->where('approval_status', '承認待ち')->count()
+        );
     }
 
     /** @test */

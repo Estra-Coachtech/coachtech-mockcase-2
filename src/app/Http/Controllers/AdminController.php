@@ -2,20 +2,26 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\User;
-use App\Models\AttendanceRecord;
-use App\Models\Application;
-use Carbon\Carbon;
 use App\Http\Requests\CorrectionRequest;
+use App\Models\Application;
+use App\Models\AttendanceRecord;
+use App\Models\User;
+use Carbon\Carbon;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class AdminController extends Controller
 {
-    public function list(Request $request)
+    /**
+     * 指定日の全ユーザーの勤怠一覧を表示する。
+     */
+    public function list(Request $request): View
     {
         $users = User::all();
         $date = Carbon::parse($request->query('date', Carbon::now()));
-        $attendanceRecords = AttendanceRecord::whereDate('date', $date)->whereIn('user_id', $users->pluck('id'))->get();
+        // N+1 を避けるため user を Eager Load する
+        $attendanceRecords = AttendanceRecord::with('user')->whereDate('date', $date)->whereIn('user_id', $users->pluck('id'))->get();
 
         return view('admin/admin-attendance-list', [
             'users' => $users,
@@ -26,14 +32,21 @@ class AdminController extends Controller
         ]);
     }
 
-    public function staffList()
+    /**
+     * スタッフ（一般ユーザー）一覧を表示する。
+     */
+    public function staffList(): View
     {
-        $users = User::all();
+        // スタッフ一覧には一般ユーザーのみを表示する（管理者は除外）
+        $users = User::where('admin_status', false)->get();
 
         return view('admin/staff-list', compact('users'));
     }
 
-    public function staffDetailList(Request $request, $id)
+    /**
+     * 指定スタッフの月次勤怠一覧を表示する（当該月の全日付・勤怠がない日は空欄）。
+     */
+    public function staffDetailList(Request $request, int $id): View
     {
         $user = User::findOrFail($id);
         $date = Carbon::parse($request->query('date', Carbon::now()));
@@ -41,21 +54,27 @@ class AdminController extends Controller
         $startOfMonth = $date->copy()->startOfMonth();
         $endOfMonth = $date->copy()->endOfMonth();
 
-        $attendanceRecords = AttendanceRecord::where('user_id', $user->id)->whereBetween('date', [$startOfMonth, $endOfMonth])->get();
+        // N+1 を避けるため breaks を Eager Load し、日付をキーに引けるようにする
+        $records = AttendanceRecord::with('breaks')
+            ->where('user_id', $user->id)
+            ->whereBetween('date', [$startOfMonth, $endOfMonth])
+            ->get()
+            ->keyBy(fn ($rec) => Carbon::parse($rec->date)->format('Y-m-d'));
 
-        $formattedAttendanceRecords = $attendanceRecords->map(function ($attendance) {
-            $weekdays = ['日', '月', '火', '水', '木', '金', '土'];
-            $date = Carbon::parse($attendance->date);
-            $weekday = $weekdays[$date->dayOfWeek];
-            return [
-                'id' => $attendance->id,
-                'date' => $date->format('m/d') . "($weekday)",
-                'clock_in' => $attendance->clock_in ? Carbon::parse($attendance->clock_in)->format('H:i') : null,
-                'clock_out' => $attendance->clock_out ? Carbon::parse($attendance->clock_out)->format('H:i') : null,
-                'total_time' => $attendance->total_time,
-                'total_break_time' => $attendance->total_break_time
-            ];
-        });
+        // 当該月の1ヶ月分すべての日付を行として並べる（勤怠がない日は空欄）
+        $weekdays = ['日', '月', '火', '水', '木', '金', '土'];
+        $formattedAttendanceRecords = collect();
+        for ($day = $startOfMonth->copy(); $day->lte($endOfMonth); $day->addDay()) {
+            $record = $records->get($day->format('Y-m-d'));
+            $formattedAttendanceRecords->push([
+                'id' => $record?->id,
+                'date' => $day->format('m/d') . "({$weekdays[$day->dayOfWeek]})",
+                'clock_in' => $record?->clock_in ? Carbon::parse($record->clock_in)->format('H:i') : null,
+                'clock_out' => $record?->clock_out ? Carbon::parse($record->clock_out)->format('H:i') : null,
+                'total_time' => $record?->total_time,
+                'total_break_time' => $record?->total_break_time,
+            ]);
+        }
 
         return view(
             'admin/staff-attendance-list',
@@ -69,7 +88,10 @@ class AdminController extends Controller
         );
     }
 
-    public function detail($id)
+    /**
+     * 管理者向けの勤怠詳細画面を表示する。
+     */
+    public function detail(int $id): View
     {
         $attendanceRecords = AttendanceRecord::with('breaks')->findOrFail($id);
         $user = User::findOrFail($attendanceRecords->user_id);
@@ -99,7 +121,10 @@ class AdminController extends Controller
         return view('admin.admin-detail', compact('user', 'attendanceRecord', 'application'));
     }
 
-    public function amendmentApplication(CorrectionRequest $request, $id)
+    /**
+     * 管理者が勤怠を直接修正する。
+     */
+    public function amendmentApplication(CorrectionRequest $request, int $id): View
     {
         $attendance = AttendanceRecord::findOrFail($id);
         $user = User::findOrFail($attendance->user_id);
@@ -153,15 +178,20 @@ class AdminController extends Controller
         return app(AdminController::class)->detail($id);
     }
 
-
-    public function applicationList()
+    /**
+     * 修正申請一覧（全ユーザー）を表示する。
+     */
+    public function applicationList(): View
     {
         $user = User::all();
         $applications = Application::all();
         return view('admin/admin-application-list', compact('user', 'applications'));
     }
 
-    public function approvalShow($id)
+    /**
+     * 修正申請の承認画面を表示する。
+     */
+    public function approvalShow(int $id): View
     {
         $application = Application::findOrFail($id);
         $user = User::findOrFail($application->user_id);
@@ -175,58 +205,64 @@ class AdminController extends Controller
         return view('admin/admin-application-detail', compact('user', 'application'));
     }
 
-    public function approval(Request $request, $id)
-{
-    $application = Application::findOrFail($id);
-    $user = User::findOrFail($application->user_id);
-    $attendanceRecord = AttendanceRecord::findOrFail($application->attendance_record_id);
+    /**
+     * 修正申請を承認し、申請内容を勤怠へ反映する。
+     */
+    public function approval(Request $request, int $id): View
+    {
+        $application = Application::findOrFail($id);
+        $user = User::findOrFail($application->user_id);
+        $attendanceRecord = AttendanceRecord::findOrFail($application->attendance_record_id);
 
-    $application->approval_status = "承認済み";
-    $application->save();
+        $application->approval_status = "承認済み";
+        $application->save();
 
-    $attendanceRecord->date = $application->new_date;
-    $attendanceRecord->clock_in = $application->new_clock_in;
-    $attendanceRecord->clock_out = $application->new_clock_out;
-    $attendanceRecord->comment = $application->comment;
+        $attendanceRecord->date = $application->new_date;
+        $attendanceRecord->clock_in = $application->new_clock_in;
+        $attendanceRecord->clock_out = $application->new_clock_out;
+        $attendanceRecord->comment = $application->comment;
 
-    // 既存のbreaksを削除
-    $attendanceRecord->breaks()->delete();
+        // 既存のbreaksを削除
+        $attendanceRecord->breaks()->delete();
 
-    // application_breaks → breaksへコピー
-    foreach ($application->proposalBreaks as $applicationBreak) {
-        $attendanceRecord->breaks()->create([
-            'break_in' => $applicationBreak->break_in,
-            'break_out' => $applicationBreak->break_out,
-        ]);
-    }
-
-    $clockIn = Carbon::parse($attendanceRecord->clock_in);
-    $clockOut = Carbon::parse($attendanceRecord->clock_out);
-
-    $totalBreakTime = 0;
-    foreach ($attendanceRecord->breaks as $break) {
-        if ($break->break_in && $break->break_out) {
-            $breakIn = Carbon::parse($break->break_in);
-            $breakOut = Carbon::parse($break->break_out);
-            $totalBreakTime += $breakIn->diffInMinutes($breakOut);
+        // application_breaks → breaksへコピー
+        foreach ($application->proposalBreaks as $applicationBreak) {
+            $attendanceRecord->breaks()->create([
+                'break_in' => $applicationBreak->break_in,
+                'break_out' => $applicationBreak->break_out,
+            ]);
         }
+
+        $clockIn = Carbon::parse($attendanceRecord->clock_in);
+        $clockOut = Carbon::parse($attendanceRecord->clock_out);
+
+        $totalBreakTime = 0;
+        foreach ($attendanceRecord->breaks as $break) {
+            if ($break->break_in && $break->break_out) {
+                $breakIn = Carbon::parse($break->break_in);
+                $breakOut = Carbon::parse($break->break_out);
+                $totalBreakTime += $breakIn->diffInMinutes($breakOut);
+            }
+        }
+
+        $totalBreakHours = floor($totalBreakTime / 60);
+        $totalBreakMinutes = $totalBreakTime % 60;
+        $attendanceRecord->total_break_time = sprintf('%02d:%02d', $totalBreakHours, $totalBreakMinutes);
+
+        $totalWorkedMinutes = $clockIn->diffInMinutes($clockOut) - $totalBreakTime;
+        $hours = floor($totalWorkedMinutes / 60);
+        $minutes = $totalWorkedMinutes % 60;
+        $attendanceRecord->total_time = sprintf('%02d:%02d', $hours, $minutes);
+
+        $attendanceRecord->save();
+
+        return app(AdminController::class)->applicationList($id);
     }
 
-    $totalBreakHours = floor($totalBreakTime / 60);
-    $totalBreakMinutes = $totalBreakTime % 60;
-    $attendanceRecord->total_break_time = sprintf('%02d:%02d', $totalBreakHours, $totalBreakMinutes);
-
-    $totalWorkedMinutes = $clockIn->diffInMinutes($clockOut) - $totalBreakTime;
-    $hours = floor($totalWorkedMinutes / 60);
-    $minutes = $totalWorkedMinutes % 60;
-    $attendanceRecord->total_time = sprintf('%02d:%02d', $hours, $minutes);
-
-    $attendanceRecord->save();
-
-    return app(AdminController::class)->applicationList($id);
-}
-
-    public function export(Request $request)
+    /**
+     * 指定スタッフ・月の勤怠を CSV で出力する。
+     */
+    public function export(Request $request): Response
     {
         $userId = $request->input('user_id');
         $yearMonth = $request->input('year_month');
@@ -237,7 +273,6 @@ class AdminController extends Controller
 
         $user = User::find($userId);
         $userName = $user->name;
-
 
         $csvHeader = [
             '日付',

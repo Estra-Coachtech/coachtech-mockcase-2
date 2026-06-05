@@ -8,6 +8,7 @@ use App\Http\Requests\Api\V1\StoreAttendanceRecordRequest;
 use App\Http\Requests\Api\V1\UpdateAttendanceRecordRequest;
 use App\Http\Resources\AttendanceRecordResource;
 use App\Models\AttendanceRecord;
+use Carbon\Carbon;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -82,6 +83,7 @@ class AttendanceRecordController extends Controller
             ->create($request->validated());
 
         $attendanceRecord->load(['user', 'breaks']);
+        $this->syncTotals($attendanceRecord);
 
         return (new AttendanceRecordResource($attendanceRecord))
             ->response()
@@ -101,6 +103,7 @@ class AttendanceRecordController extends Controller
 
         $attendanceRecord->update($request->validated());
         $attendanceRecord->load(['user', 'breaks']);
+        $this->syncTotals($attendanceRecord);
 
         return new AttendanceRecordResource($attendanceRecord);
     }
@@ -118,5 +121,37 @@ class AttendanceRecordController extends Controller
         $attendanceRecord->delete();
 
         return response()->noContent();
+    }
+
+    /**
+     * 勤怠の合計勤務時間・合計休憩時間を clock_in / clock_out / breaks から再計算して保存する。
+     *
+     * API 経由では休憩を登録しないため total_break_time は通常 00:00 となるが、
+     * NULL のまま返さないよう常に算出・保存する。
+     *
+     * @param  AttendanceRecord  $attendanceRecord  breaks を Eager Load 済みの勤怠
+     */
+    private function syncTotals(AttendanceRecord $attendanceRecord): void
+    {
+        $breakMinutes = $attendanceRecord->breaks->reduce(function (int $carry, $break): int {
+            if ($break->break_in && $break->break_out) {
+                return $carry + Carbon::parse($break->break_in)->diffInMinutes(Carbon::parse($break->break_out));
+            }
+
+            return $carry;
+        }, 0);
+
+        $attendanceRecord->total_break_time = sprintf('%02d:%02d', intdiv($breakMinutes, 60), $breakMinutes % 60);
+
+        if ($attendanceRecord->clock_in && $attendanceRecord->clock_out) {
+            $clockIn = Carbon::parse($attendanceRecord->clock_in);
+            $clockOut = Carbon::parse($attendanceRecord->clock_out);
+            $workedMinutes = max(0, $clockIn->diffInMinutes($clockOut) - $breakMinutes);
+            $attendanceRecord->total_time = sprintf('%02d:%02d', intdiv($workedMinutes, 60), $workedMinutes % 60);
+        } else {
+            $attendanceRecord->total_time = null;
+        }
+
+        $attendanceRecord->save();
     }
 }

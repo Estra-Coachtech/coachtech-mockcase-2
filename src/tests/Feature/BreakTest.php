@@ -3,7 +3,6 @@
 namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use App\Models\User;
 use App\Models\AttendanceRecord;
@@ -19,16 +18,24 @@ class BreakTest extends TestCase
         $this->seed(UsersTableSeeder::class);
     }
 
+    /** @test */
     public function it_should_correctly_function_when_break_button_is_clicked()
     {
-        $user = User::factory()->create(['attendance_status' => '勤務中']);
+        $user = User::factory()->create(['attendance_status' => '勤務外']);
         $this->actingAs($user);
+
+        // 出勤して休憩に入れる状態にする
+        $this->post('/attendance', ['action' => 'clock_in']);
 
         $response = $this->get('/attendance');
         $response->assertSee('休憩入');
 
-        $response = $this->post('/attendance', ['action' => 'break_in']);
+        $this->post('/attendance', ['action' => 'break_in']);
 
+        $this->assertDatabaseHas('users', [
+            'id' => $user->id,
+            'attendance_status' => '休憩中',
+        ]);
     }
 
     /** @test */

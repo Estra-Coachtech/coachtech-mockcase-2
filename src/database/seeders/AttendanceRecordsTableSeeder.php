@@ -37,7 +37,7 @@ use Illuminate\Support\Facades\DB;
  *      - 早退回数: 1 回
  *      - 長時間労働回数: 1 日
  *
- * user2 / user3 にはランダムなテストデータを少量作成する（既存ファクトリ流用）。
+ * user2 / user3 には直近3ヶ月の平日に実運用に近い勤怠＋固定休憩（12:00-13:00）を作成する。
  */
 class AttendanceRecordsTableSeeder extends Seeder
 {
@@ -93,8 +93,54 @@ class AttendanceRecordsTableSeeder extends Seeder
             ]);
         }
 
-        // user2 / user3 用のランダムレコード（既存ファクトリ）
-        AttendanceRecord::factory()->count(10)->create();
+        // user2 / user3 にも実運用に近い勤怠＋休憩データを作成する（直近3ヶ月の平日）
+        $otherUsers = User::whereIn('email', ['user2@example.com', 'user3@example.com'])->get();
+        foreach ($otherUsers as $otherUser) {
+            $this->buildRecentWeekdays($otherUser->id);
+        }
+    }
+
+    /**
+     * 指定ユーザーに直近3ヶ月の平日分の勤怠＋固定休憩（12:00-13:00）を作成する。
+     *
+     * 件数・日付分布を実運用に近づけるため、平日のみ・概ね定時勤務とし、
+     * 5の倍数日のみ残業（19:00 退勤）とする。
+     */
+    private function buildRecentWeekdays(int $userId): void
+    {
+        $start = Carbon::now()->subMonths(3)->startOfMonth();
+        $end = Carbon::now();
+
+        for ($day = $start->copy(); $day->lte($end); $day->addDay()) {
+            if (! $day->isWeekday()) {
+                continue;
+            }
+
+            // 5の倍数日は残業（19:00 退勤）、それ以外は定時（18:00 退勤）
+            $clockOutHour = ($day->day % 5 === 0) ? 19 : 18;
+            $breakMinutes = 60; // 12:00-13:00
+            $workedMinutes = ($clockOutHour - 9) * 60 - $breakMinutes;
+
+            $attendanceId = DB::table('attendance_records')->insertGetId([
+                'user_id' => $userId,
+                'date' => $day->format('Y-m-d'),
+                'clock_in' => '09:00:00',
+                'clock_out' => sprintf('%02d:00:00', $clockOutHour),
+                'total_break_time' => '01:00',
+                'total_time' => sprintf('%02d:%02d', intdiv($workedMinutes, 60), $workedMinutes % 60),
+                'comment' => $clockOutHour === 19 ? '残業' : '通常勤務',
+                'created_at' => $day->copy(),
+                'updated_at' => $day->copy(),
+            ]);
+
+            DB::table('breaks')->insert([
+                'attendance_record_id' => $attendanceId,
+                'break_in' => '12:00:00',
+                'break_out' => '13:00:00',
+                'created_at' => $day->copy(),
+                'updated_at' => $day->copy(),
+            ]);
+        }
     }
 
     /**

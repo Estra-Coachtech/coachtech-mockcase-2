@@ -93,12 +93,12 @@ class ReportController extends Controller
                 $grossMinutes = $clockOut->diffInMinutes($clockIn);
 
                 $breakMinutes = $r->breaks
-                    ->filter(fn ($b) => $b->break_out !== null)
-                    ->reduce(function (int $carry, $b) use ($dateStr): int {
-                        $bIn = Carbon::parse($dateStr.' '.$this->toTimeString($b->break_in));
-                        $bOut = Carbon::parse($dateStr.' '.$this->toTimeString($b->break_out));
+                    ->filter(fn ($break) => $break->break_out !== null)
+                    ->reduce(function (int $carry, $break) use ($dateStr): int {
+                        $breakIn = Carbon::parse($dateStr.' '.$this->toTimeString($break->break_in));
+                        $breakOut = Carbon::parse($dateStr.' '.$this->toTimeString($break->break_out));
 
-                        return $carry + $bOut->diffInMinutes($bIn);
+                        return $carry + $breakOut->diffInMinutes($breakIn);
                     }, 0);
 
                 $workMinutes = max(0, $grossMinutes - $breakMinutes);

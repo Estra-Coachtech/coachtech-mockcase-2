@@ -7,16 +7,12 @@
 @section('content')
 <div class="attendance-list__content">
     <div class="content__header">
-        <h2 class="content__header--item">{{ $date->format('Y年m月d日') }}の勤怠</h2>
+        <h1 class="content__header--item">{{ $date->format('Y年m月d日') }}の勤怠</h1>
     </div>
     <div class="content__menu">
         <a class="previous-day" href="?date={{ $previousDay }}">前日</a>
         <p class="current-day">{{ $date->format('Y/m/d') }}</p>
-        @if ($date->lt(\Carbon\Carbon::create(2024, 12, 31)))
         <a class="next-day" href="?date={{ $nextDay }}">翌日</a>
-        @else
-        <div class="next-day-placeholder"></div>
-        @endif
     </div>
     <table class="table">
         <tr class="table__row">

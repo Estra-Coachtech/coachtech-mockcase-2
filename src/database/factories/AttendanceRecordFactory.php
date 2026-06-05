@@ -18,7 +18,8 @@ class AttendanceRecordFactory extends Factory
         $userId  = $userIds->random();
 
         // 日付と打刻（実際にはCarbonインスタンスを渡し、モデルのキャストでH:iに）
-        $date     = $this->faker->dateTimeBetween('2024-01-01', '2024-12-31')->format('Y-m-d');
+        // 直近3ヶ月のデータを生成する（採点時に「最近の勤怠」として確認できるように）
+        $date     = $this->faker->dateTimeBetween('-3 months', 'now')->format('Y-m-d');
         $clockIn  = Carbon::createFromFormat('Y-m-d H:i:s', $date.' '.$this->faker->time('H:i:s'));
         $clockOut = Carbon::createFromFormat('Y-m-d H:i:s', $date.' '.$this->faker->time('H:i:s'))
                       ->addHours(rand(6, 10)); // 出退勤間隔は6〜10時間のランダム

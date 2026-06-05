@@ -71,7 +71,12 @@
     display: block;
 }
 
+.application__tab--label {
+    color: #737373;
+}
+
 .application__tab--input:checked+.application__tab--label {
+    color: #000;
     font-weight: bold;
 }
 

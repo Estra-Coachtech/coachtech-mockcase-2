@@ -3,12 +3,10 @@
 namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use App\Models\User;
 use App\Models\AttendanceRecord;
 use Database\Seeders\DatabaseSeeder;
-use Carbon\Carbon;
 
 class UserAttendanceTest extends TestCase
 {
@@ -23,18 +21,39 @@ class UserAttendanceTest extends TestCase
     /** @test */
     public function it_should_display_all_attendance_information_for_logged_in_user()
     {
-        $user = User::all()->random();
+        $user = User::factory()->create(['attendance_status' => '勤務外']);
+        $other = User::factory()->create(['attendance_status' => '勤務外']);
         $this->actingAs($user);
-        $this->post('/attendance', ['action' => 'clock_in']);
-        $this->post('/attendance', ['action' => 'clock_out']);
+
+        // ログインユーザー自身の勤怠（識別しやすい時刻で2件）
+        AttendanceRecord::create([
+            'user_id' => $user->id,
+            'date' => now()->startOfMonth()->format('Y-m-d'),
+            'clock_in' => '08:11',
+            'clock_out' => '17:11',
+        ]);
+        AttendanceRecord::create([
+            'user_id' => $user->id,
+            'date' => now()->startOfMonth()->addDay()->format('Y-m-d'),
+            'clock_in' => '08:22',
+            'clock_out' => '17:22',
+        ]);
+        // 他ユーザーの勤怠（自分の一覧に混ざってはいけない）
+        AttendanceRecord::create([
+            'user_id' => $other->id,
+            'date' => now()->startOfMonth()->format('Y-m-d'),
+            'clock_in' => '23:44',
+            'clock_out' => '23:55',
+        ]);
 
         $response = $this->get('/attendance/list');
 
         $response->assertStatus(200);
-        $formattedAttendanceRecords = $response->viewData('formattedAttendanceRecords');
-
-        $this->assertNotEmpty($formattedAttendanceRecords);
-
+        // 自分の勤怠はすべて表示される
+        $response->assertSee('08:11');
+        $response->assertSee('08:22');
+        // 他人の勤怠は表示されない
+        $response->assertDontSee('23:44');
     }
 
     /** @test */
@@ -45,37 +64,51 @@ class UserAttendanceTest extends TestCase
 
         $response = $this->get('/attendance/list');
 
-        $response->assertSee(now()->format('Y-m'));
+        $response->assertSee(now()->format('Y/m'));
     }
 
     /** @test */
     public function it_should_display_previous_month_attendance_information_when_previous_month_button_is_clicked()
     {
-        $user = User::all()->random();
+        $user = User::factory()->create(['attendance_status' => '勤務外']);
         $this->actingAs($user);
 
         $previousMonth = now()->subMonth();
+        AttendanceRecord::create([
+            'user_id' => $user->id,
+            'date' => $previousMonth->copy()->startOfMonth()->format('Y-m-d'),
+            'clock_in' => '08:33',
+            'clock_out' => '17:33',
+        ]);
 
-        $response = $this->get('/attendance/list');
+        // 「前月」ボタン押下に相当：前月を指定して遷移する
+        $response = $this->get('/attendance/list?date=' . $previousMonth->format('Y-m-d'));
 
         $response->assertStatus(200);
-
-        $response->assertSee($previousMonth->format('Y-m'));
+        $response->assertSee($previousMonth->format('Y/m'));
+        $response->assertSee('08:33');
     }
 
     /** @test */
     public function it_should_display_next_month_attendance_information_when_next_month_button_is_clicked()
     {
-        $user = User::all()->random();
+        $user = User::factory()->create(['attendance_status' => '勤務外']);
         $this->actingAs($user);
 
         $nextMonth = now()->addMonth();
+        AttendanceRecord::create([
+            'user_id' => $user->id,
+            'date' => $nextMonth->copy()->startOfMonth()->format('Y-m-d'),
+            'clock_in' => '08:44',
+            'clock_out' => '17:44',
+        ]);
 
-        $response = $this->get('/attendance/list');
+        // 「翌月」ボタン押下に相当：翌月を指定して遷移する
+        $response = $this->get('/attendance/list?date=' . $nextMonth->format('Y-m-d'));
 
         $response->assertStatus(200);
-
-        $response->assertSee($nextMonth->format('Y-m'));
+        $response->assertSee($nextMonth->format('Y/m'));
+        $response->assertSee('08:44');
     }
 
     /** @test */

@@ -99,7 +99,12 @@ class AttendanceRecordApiTest extends TestCase
 
         $response->assertOk()
             ->assertJsonPath('data.id', $record->id)
-            ->assertJsonPath('data.user.id', $user->id);
+            ->assertJsonPath('data.user.id', $user->id)
+            // 時刻は H:i:s 文字列で返る
+            ->assertJsonPath('data.clock_in', '09:00:00')
+            ->assertJsonPath('data.clock_out', '18:00:00')
+            // user には email を含めず id / name のみ返す
+            ->assertJsonPath('data.user', ['id' => $user->id, 'name' => $user->name]);
     }
 
     /** @test */
@@ -136,7 +141,10 @@ class AttendanceRecordApiTest extends TestCase
             'comment' => 'API登録',
         ]);
 
-        $response->assertStatus(201);
+        $response->assertStatus(201)
+            // total_time / total_break_time が算出されて返る（NULL のままにしない）
+            ->assertJsonPath('data.total_break_time', '00:00')
+            ->assertJsonPath('data.total_time', '09:00');
         // date / clock_in は MySQL/SQLite で保存形式が異なるため、Eloquent 経由で検証
         $record = AttendanceRecord::where('user_id', $user->id)->latest('id')->first();
         $this->assertNotNull($record);

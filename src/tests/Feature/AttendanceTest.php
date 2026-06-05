@@ -3,7 +3,6 @@
 namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use Database\Seeders\UsersTableSeeder;
 use App\Models\User;
@@ -19,6 +18,7 @@ class AttendanceTest extends TestCase
         $this->seed(UsersTableSeeder::class);
     }
 
+    /** @test */
     public function attendance_button_functionality()
     {
         $user = User::all()->random();
@@ -31,7 +31,7 @@ class AttendanceTest extends TestCase
 
         $this->assertDatabaseHas('users', [
             'id' => $user->id,
-            'attendance_status' => '勤務中'
+            'attendance_status' => '出勤中'
         ]);
     }
 

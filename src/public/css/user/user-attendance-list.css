@@ -1,6 +1,6 @@
 .attendance-list__content {
     background: #F0EFF2;
-    height: 100vh;
+    min-height: 100vh;
     margin: 0 auto;
     max-width: 1540px;
     padding: 50px;

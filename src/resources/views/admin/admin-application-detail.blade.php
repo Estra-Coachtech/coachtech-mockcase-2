@@ -7,7 +7,7 @@
 @section('content')
 <div class="detail__content">
     <div class="detail__header">
-        <h2 class="content__header--item">勤怠詳細</h2>
+        <h1 class="content__header--item">勤怠詳細</h1>
     </div>
     <form class="applied-form" action="{{ url('/stamp_correction_request/approve/' . $application['id']) }}" method="post">
         @csrf
@@ -33,20 +33,19 @@
                     <input class="applied-form__input" type="text" value="{{ $application->new_clock_out }}" readonly>
                 </div>
             </div>
-            <div class="applied-form__group form__break-group">
-                <p class="applied-form__header">休憩</p>
-                <div class="applied-form__input-wrapper">
-                    @foreach($application->proposalBreaks as $break)
-                        <div class="applied-form__input-group">
-                            <input class="applied-form__input readonly" type="text" name="new_break_in[]"
-                                value="{{ \Carbon\Carbon::parse($break->break_in)->format('H:i') }}" readonly>
-                            <p>〜</p>
-                            <input class="applied-form__input readonly" type="text" name="new_break_out[]"
-                                value="{{ \Carbon\Carbon::parse($break->break_out)->format('H:i') }}" readonly>
-                        </div>
-                    @endforeach
+            {{-- 休憩は「休憩」「休憩1」「休憩2」…とセクションを分けて表示 --}}
+            @foreach($application->proposalBreaks as $index => $break)
+                <div class="applied-form__group">
+                    <p class="applied-form__header">{{ $index === 0 ? '休憩' : '休憩' . $index }}</p>
+                    <div class="applied-form__input-group">
+                        <input class="applied-form__input readonly" type="text" name="new_break_in[]"
+                            value="{{ \Carbon\Carbon::parse($break->break_in)->format('H:i') }}" readonly>
+                        <p>〜</p>
+                        <input class="applied-form__input readonly" type="text" name="new_break_out[]"
+                            value="{{ $break->break_out ? \Carbon\Carbon::parse($break->break_out)->format('H:i') : '' }}" readonly>
+                    </div>
                 </div>
-            </div>
+            @endforeach
             <div class="applied-form__group">
                 <p class="applied-form__header">備考</p>
                 <div class="applied-form__input-group">

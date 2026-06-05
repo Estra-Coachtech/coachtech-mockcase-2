@@ -4,6 +4,7 @@
     background: #f0eff2;
     margin: 0 auto;
     max-width: 1540px;
+    min-height: 100vh;
     padding: 50px;
     padding-top: 50px;
 }

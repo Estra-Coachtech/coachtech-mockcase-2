@@ -2,6 +2,7 @@
     background: #f0eff2;
     margin: 0 auto;
     max-width: 1540px;
+    min-height: 100vh;
     padding: 50px;
     padding-top: 50px;
 }
@@ -48,7 +49,9 @@
     align-items: center;
     justify-content: space-between;
     gap: 0.5rem;
-    margin: 0 auto;
+    /* 名前・日付の入力欄を時間表示の入力欄と同じ start 位置に揃えるため、
+       中央寄せ(margin: 0 auto)をやめてセル左端に合わせる */
+    margin: 0;
     padding: 0;
 }
 

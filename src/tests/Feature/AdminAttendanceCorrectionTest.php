@@ -3,12 +3,10 @@
 namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use App\Models\User;
 use App\Models\AttendanceRecord;
 use Database\Seeders\DatabaseSeeder;
-use Carbon\Carbon;
 use App\Models\Application;
 
 class AdminAttendanceCorrectionTest extends TestCase

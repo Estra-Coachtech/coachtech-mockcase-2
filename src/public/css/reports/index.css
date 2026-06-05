@@ -1,0 +1,67 @@
+.reports {
+    max-width: 960px;
+    margin: 32px auto;
+    padding: 0 16px;
+}
+
+.reports h1 {
+    margin-bottom: 16px;
+    font-size: 20px;
+}
+
+.reports h2 {
+    margin: 24px 0 12px;
+    font-size: 16px;
+}
+
+.reports__note {
+    font-size: 12px;
+    color: #666;
+}
+
+.summary {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+
+.summary__card {
+    padding: 16px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background: #fafafa;
+}
+
+.summary__label {
+    font-size: 12px;
+    color: #666;
+}
+
+.summary__value {
+    margin-top: 6px;
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.reports table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.reports th,
+.reports td {
+    padding: 8px 12px;
+    border-bottom: 1px solid #eee;
+    text-align: right;
+}
+
+.reports th:first-child,
+.reports td:first-child {
+    text-align: left;
+}
+
+.anomalies {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}

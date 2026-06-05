@@ -3,12 +3,10 @@
 namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use App\Models\User;
 use App\Models\AttendanceRecord;
 use Database\Seeders\DatabaseSeeder;
-use Carbon\Carbon;
 
 class AdminAttendanceDetailTest extends TestCase
 {
@@ -54,7 +52,7 @@ class AdminAttendanceDetailTest extends TestCase
 
         $response = $this->post('/attendance/' . $attendanceRecord->id, [
             'new_clock_in' => '10:00',
-            'new_clock_out' => '9:00',
+            'new_clock_out' => '09:00',
             'comment' => 'テストコメント'
         ]);
 
@@ -77,15 +75,15 @@ class AdminAttendanceDetailTest extends TestCase
         $response = $this->get('/admin/attendance/' . $attendanceRecord->id);
 
         $response = $this->post('/attendance/' . $attendanceRecord->id, [
-            'new_clock_in' => '9:00',
+            'new_clock_in' => '09:00',
             'new_clock_out' => '15:00',
-            'new_break_in' => '16:00',
-            'new_break_out' => '15:30',
+            'new_break_in' => ['16:00'],
+            'new_break_out' => ['15:30'],
             'comment' => 'Test comment'
         ]);
 
-        $response->assertSessionHasErrors(['new_break_in']);
-        $this->assertContains('休憩時間が勤務時間外です。', session('errors')->get('new_break_in'));
+        $response->assertSessionHasErrors(['new_break_in.0']);
+        $this->assertContains('休憩時間が不適切な値です。', session('errors')->get('new_break_in.0'));
     }
 
     /** @test */
@@ -103,15 +101,15 @@ class AdminAttendanceDetailTest extends TestCase
         $response = $this->get('/admin/attendance/' . $attendanceRecord->id);
 
         $response = $this->post('/attendance/' . $attendanceRecord->id, [
-            'new_clock_in' => '9:00',
+            'new_clock_in' => '09:00',
             'new_clock_out' => '15:00',
-            'new_break_in' => '10:00',
-            'new_break_out' => '16:00',
+            'new_break_in' => ['10:00'],
+            'new_break_out' => ['16:00'],
             'comment' => 'Test comment'
         ]);
 
-        $response->assertSessionHasErrors(['new_break_out']);
-        $this->assertContains('休憩時間が勤務時間外です。', session('errors')->get('new_break_out'));
+        $response->assertSessionHasErrors(['new_break_out.0']);
+        $this->assertContains('休憩時間もしくは退勤時間が不適切な値です', session('errors')->get('new_break_out.0'));
     }
 
     /** @test */

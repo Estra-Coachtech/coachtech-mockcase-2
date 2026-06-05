@@ -2,19 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CorrectionRequest;
+use App\Models\Application;
+use App\Models\AttendanceRecord;
+use Carbon\Carbon;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Carbon\Carbon;
-use App\Models\User;
-use App\Models\Application;
-use App\Models\ApplicationBreak;
-use App\Models\AttendanceRecord;
-use App\Models\AttendanceBreak;
-use App\Http\Requests\CorrectionRequest;
 
 class UserController extends Controller
 {
-    public function index()
+    /**
+     * 勤怠打刻画面を表示する。
+     */
+    public function index(): View
     {
         $user = Auth::user();
 
@@ -44,7 +46,10 @@ class UserController extends Controller
         );
     }
 
-    public function attendance(Request $request)
+    /**
+     * 出勤・退勤・休憩入・休憩戻の打刻を処理する。
+     */
+    public function attendance(Request $request): RedirectResponse
     {
         $user = Auth::user();
         $action = $request->input('action');
@@ -97,11 +102,10 @@ class UserController extends Controller
             $clockOut = Carbon::parse($attendance->clock_out);
 
             $totalBreakTime = 0;
-            foreach ($attendance->breaks as $b) {
-                if ($b->break_in && $b->break_out) {
-                    $totalBreakTime +=
-                        Carbon::parse($b->break_in)
-                              ->diffInMinutes(Carbon::parse($b->break_out));
+            foreach ($attendance->breaks as $break) {
+                if ($break->break_in && $break->break_out) {
+                    $totalBreakTime += Carbon::parse($break->break_in)
+                        ->diffInMinutes(Carbon::parse($break->break_out));
                 }
             }
 
@@ -127,7 +131,10 @@ class UserController extends Controller
         return redirect('/attendance');
     }
 
-    public function list(Request $request)
+    /**
+     * ログインユーザーの月次勤怠一覧を表示する（当該月の全日付・勤怠がない日は空欄）。
+     */
+    public function list(Request $request): View
     {
         $user = Auth::user();
         $date = Carbon::parse($request->query('date', now()));
@@ -135,41 +142,49 @@ class UserController extends Controller
         $startOfMonth = $date->copy()->startOfMonth();
         $endOfMonth   = $date->copy()->endOfMonth();
 
-        $attendanceRecords = AttendanceRecord::where('user_id', $user->id)
+        // N+1 を避けるため breaks を Eager Load し、日付をキーに引けるようにする
+        $records = AttendanceRecord::with('breaks')
+            ->where('user_id', $user->id)
             ->whereBetween('date', [$startOfMonth, $endOfMonth])
-            ->get();
+            ->get()
+            ->keyBy(fn ($rec) => Carbon::parse($rec->date)->format('Y-m-d'));
 
-        $formatted = $attendanceRecords->map(function ($rec) {
-            $weekdays = ['日','月','火','水','木','金','土'];
-            $d = Carbon::parse($rec->date);
-            return [
-                'id'               => $rec->id,
-                'date'             => $d->format('m/d') . "({$weekdays[$d->dayOfWeek]})",
-                'clock_in'         => $rec->clock_in  ? Carbon::parse($rec->clock_in)->format('H:i') : null,
-                'clock_out'        => $rec->clock_out ? Carbon::parse($rec->clock_out)->format('H:i') : null,
-                'total_time'       => $rec->total_time,
-                'total_break_time' => $rec->total_break_time,
-            ];
-        });
+        // 当該月の1ヶ月分すべての日付を行として並べる（勤怠がない日は空欄）
+        $weekdays = ['日','月','火','水','木','金','土'];
+        $formatted = collect();
+        for ($day = $startOfMonth->copy(); $day->lte($endOfMonth); $day->addDay()) {
+            $record = $records->get($day->format('Y-m-d'));
+            $formatted->push([
+                'id'               => $record?->id,
+                'date'             => $day->format('m/d') . "({$weekdays[$day->dayOfWeek]})",
+                'clock_in'         => $record?->clock_in  ? Carbon::parse($record->clock_in)->format('H:i') : null,
+                'clock_out'        => $record?->clock_out ? Carbon::parse($record->clock_out)->format('H:i') : null,
+                'total_time'       => $record?->total_time,
+                'total_break_time' => $record?->total_break_time,
+            ]);
+        }
 
         return view('user/user-attendance-list', [
             'formattedAttendanceRecords' => $formatted,
-            'date'      => $date,
-            'nextMonth'=> $date->copy()->addMonth()->format('Y-m'),
-            'previousMonth'=> $date->copy()->subMonth()->format('Y-m'),
+            'date'          => $date,
+            'nextMonth'     => $date->copy()->addMonth()->format('Y-m'),
+            'previousMonth' => $date->copy()->subMonth()->format('Y-m'),
         ]);
     }
 
-    public function detail($id)
+    /**
+     * 勤怠詳細画面を表示する。承認待ち申請がある場合はその内容を併せて渡す。
+     */
+    public function detail(int $id): View
     {
         $attendanceRecord = AttendanceRecord::findOrFail($id);
         $user = Auth::user();
 
         // マスター休憩
-        $masterBreaks = $attendanceRecord->breaks()->get()->map(function ($b) {
+        $masterBreaks = $attendanceRecord->breaks()->get()->map(function ($break) {
             return [
-                'break_in'  => $b->break_in ? Carbon::parse($b->break_in)->format('H:i') : null,
-                'break_out' => $b->break_out ? Carbon::parse($b->break_out)->format('H:i') : null,
+                'break_in'  => $break->break_in ? Carbon::parse($break->break_in)->format('H:i') : null,
+                'break_out' => $break->break_out ? Carbon::parse($break->break_out)->format('H:i') : null,
             ];
         })->toArray();
 
@@ -179,10 +194,10 @@ class UserController extends Controller
             ->first();
         $proposal = [];
         if ($application) {
-            $proposal = $application->proposalBreaks()->get()->map(function ($b) {
+            $proposal = $application->proposalBreaks()->get()->map(function ($break) {
                 return [
-                    'break_in'  => Carbon::parse($b->break_in)->format('H:i'),
-                    'break_out' => $b->break_out ? Carbon::parse($b->break_out)->format('H:i') : null,
+                    'break_in'  => Carbon::parse($break->break_in)->format('H:i'),
+                    'break_out' => $break->break_out ? Carbon::parse($break->break_out)->format('H:i') : null,
                 ];
             })->toArray();
         }
@@ -210,7 +225,10 @@ class UserController extends Controller
         return view('user/user-detail', compact('user', 'data'));
     }
 
-    public function amendmentApplication(CorrectionRequest $request, $id)
+    /**
+     * 勤怠の修正申請を作成する。
+     */
+    public function amendmentApplication(CorrectionRequest $request, int $id): RedirectResponse
     {
         $user = Auth::user();
         $application = Application::create([
@@ -242,7 +260,10 @@ class UserController extends Controller
         return redirect('/stamp_correction_request/list');
     }
 
-    public function applicationList()
+    /**
+     * ログインユーザーの修正申請一覧を表示する。
+     */
+    public function applicationList(): View
     {
         $user         = Auth::user();
         $applications = Application::where('user_id', $user->id)->get();
@@ -254,7 +275,9 @@ class UserController extends Controller
                 'application_date' => $application->application_date
                                 ? Carbon::parse($application->application_date)->format('Y/m/d')
                                 : null,
-                'date'          => $application->new_date,
+                'date'          => $application->new_date
+                                ? Carbon::parse($application->new_date)->format('Y/m/d')
+                                : null,
                 'clock_in'      => $application->new_clock_in,
                 'clock_out'     => $application->new_clock_out,
                 'comment'       => $application->comment,
@@ -268,15 +291,18 @@ class UserController extends Controller
         );
     }
 
-    public function applicationDetail($id)
+    /**
+     * 修正申請の詳細画面を表示する。
+     */
+    public function applicationDetail(int $id): View
     {
         $user = Auth::user();
         $application = Application::findOrFail($id);
 
-        $proposalBreaks = $application->proposalBreaks()->get()->map(function ($b) {
+        $proposalBreaks = $application->proposalBreaks()->get()->map(function ($break) {
             return [
-                'break_in'  => $b->break_in ? Carbon::parse($b->break_in)->format('H:i') : null,
-                'break_out' => $b->break_out ? Carbon::parse($b->break_out)->format('H:i') : null,
+                'break_in'  => $break->break_in ? Carbon::parse($break->break_in)->format('H:i') : null,
+                'break_out' => $break->break_out ? Carbon::parse($break->break_out)->format('H:i') : null,
             ];
         })->toArray();
 

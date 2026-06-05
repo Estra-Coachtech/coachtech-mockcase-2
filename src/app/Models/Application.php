@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Application extends Model
 {
@@ -20,17 +22,26 @@ class Application extends Model
         'comment'
     ];
 
-    public function user()
+    /**
+     * 申請を行ったユーザー。
+     */
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function attendanceRecord()
+    /**
+     * 申請対象の勤怠。
+     */
+    public function attendanceRecord(): BelongsTo
     {
         return $this->belongsTo(AttendanceRecord::class);
     }
 
-    public function proposalBreaks()
+    /**
+     * 申請内容（修正案）の休憩。
+     */
+    public function proposalBreaks(): HasMany
     {
         return $this->hasMany(ApplicationBreak::class);
     }

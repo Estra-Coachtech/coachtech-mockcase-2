@@ -7,7 +7,7 @@
 @section('content')
 <div class="application-list__content">
     <div class="content__header">
-        <h2 class="content__header--item">申請一覧</h2>
+        <h1 class="content__header--item">申請一覧</h1>
     </div>
     <div class="application__tab">
         <input class="application__tab--input" id="tab1" type="radio" name="tab_item" checked>
@@ -46,13 +46,13 @@
                         <p class="table__description--item">{{ $application->user->name }}</p>
                     </td>
                     <td class="table__description">
-                        <p class="table__description--item">{{ $application->AttendanceRecord->date->format('Y-m-d') }}</p>
+                        <p class="table__description--item">{{ \Carbon\Carbon::parse($application->AttendanceRecord->date)->format('Y/m/d') }}</p>
                     </td>
                     <td class="table__description">
                         <p class="table__description--item">{{ $application->comment }}</p>
                     </td>
                     <td class="table__description">
-                        <p class="table__description--item">{{ $application->application_date }}</p>
+                        <p class="table__description--item">{{ \Carbon\Carbon::parse($application->application_date)->format('Y/m/d') }}</p>
                     </td>
                     <td class="table__description">
                         <a class="table__item--detail-link" href="{{ url('/stamp_correction_request/approve/' . $application['id']) }}">詳細</a>
