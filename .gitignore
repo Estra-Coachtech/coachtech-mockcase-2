@@ -9,3 +9,6 @@ docker-compose.override.yml
 .DS_Store
 .idea/
 .vscode/
+
+# 関連ドキュメント（ローカル専用。リモートには含めない）
+関連ドキュメント/
