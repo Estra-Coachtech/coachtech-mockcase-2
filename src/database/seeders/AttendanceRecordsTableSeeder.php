@@ -159,11 +159,19 @@ class AttendanceRecordsTableSeeder extends Seeder
         while (count($records) < $count && $cursor->month === $monthStart->month) {
             if ($cursor->isWeekday()) {
                 [$clockIn, $clockOut, $comment] = $patterns[$patternIndex % $patternsCount];
+
+                // 全レコードに固定休憩 12:00-13:00（60分）を付与するため、合計時間も同前提で算出する
+                $inMin = (int) substr($clockIn, 0, 2) * 60 + (int) substr($clockIn, 3, 2);
+                $outMin = (int) substr($clockOut, 0, 2) * 60 + (int) substr($clockOut, 3, 2);
+                $workedMin = ($outMin - $inMin) - 60;
+
                 $records[] = [
                     'user_id' => $userId,
                     'date' => $cursor->format('Y-m-d'),
                     'clock_in' => $clockIn,
                     'clock_out' => $clockOut,
+                    'total_break_time' => '01:00',
+                    'total_time' => sprintf('%02d:%02d', intdiv($workedMin, 60), $workedMin % 60),
                     'comment' => $comment,
                     'created_at' => $cursor->copy(),
                     'updated_at' => $cursor->copy(),
