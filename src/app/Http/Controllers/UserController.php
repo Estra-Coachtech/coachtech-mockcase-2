@@ -37,7 +37,7 @@ class UserController extends Controller
             4 => '木', 5 => '金', 6 => '土',
         ];
         $weekday = $week[$now->format('w')];
-        $formattedDate = $now->format("Y年m月d日({$weekday})");
+        $formattedDate = $now->format("Y年n月j日({$weekday})");
         $formattedTime = $now->format('H:i');
 
         return view(

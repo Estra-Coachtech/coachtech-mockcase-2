@@ -75,7 +75,7 @@
 
 .attendance__button--submit--break-in {
     background: #fff;
-    border: none;
+    border: 1px solid #000;
     border-radius: 20px;
     color: #000;
     font-size: 20px;
@@ -87,7 +87,7 @@
 
 .attendance__button--submit--break-out {
     background: #fff;
-    border: none;
+    border: 1px solid #000;
     border-radius: 20px;
     color: #000;
     font-size: 20px;

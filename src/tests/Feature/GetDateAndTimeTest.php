@@ -37,7 +37,7 @@ class GetDateAndTimeTest extends TestCase
         ];
         $weekdayIndex = $now->format('w');
         $weekday = $week[$weekdayIndex];
-        $formattedDate = $now->format('Y年m月d日(' . $weekday . ')');
+        $formattedDate = $now->format('Y年n月j日(' . $weekday . ')');
         $formattedTime = $now->format('H:i');
 
         $response->assertSee($formattedDate);
