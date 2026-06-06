@@ -48,10 +48,10 @@
                 <p class="table__description--item">{{ $attendanceRecord['clock_out'] }}</p>
             </td>
             <td class="table__description">
-                <p class="table__description--item">{{ $attendanceRecord['total_break_time'] }}</p>
+                <p class="table__description--item">{{ $attendanceRecord['total_break_time'] ? \Carbon\Carbon::parse($attendanceRecord['total_break_time'])->format('G:i') : '' }}</p>
             </td>
             <td class="table__description">
-                <p class="table__description--item">{{ $attendanceRecord['total_time'] }}</p>
+                <p class="table__description--item">{{ $attendanceRecord['total_time'] ? \Carbon\Carbon::parse($attendanceRecord['total_time'])->format('G:i') : '' }}</p>
             </td>
             <td class="table__description">
                 @if (!empty($attendanceRecord['id']))

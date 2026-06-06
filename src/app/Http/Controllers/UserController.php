@@ -208,7 +208,7 @@ class UserController extends Controller
                                 ? Carbon::parse($attendanceRecord->date)->format('Y年')
                                 : null,
             'date'          => $attendanceRecord->date
-                                ? Carbon::parse($attendanceRecord->date)->format('m月d日')
+                                ? Carbon::parse($attendanceRecord->date)->format('n月j日')
                                 : null,
             'clock_in'      => $attendanceRecord->clock_in
                                 ? Carbon::parse($attendanceRecord->clock_in)->format('H:i')
@@ -312,7 +312,7 @@ class UserController extends Controller
                                 ? Carbon::parse($application->new_date)->format('Y年')
                                 : null,
             'date'          => $application->new_date
-                                ? Carbon::parse($application->new_date)->format('m月d日')
+                                ? Carbon::parse($application->new_date)->format('n月j日')
                                 : null,
             'clock_in'      => $application->new_clock_in
                                 ? Carbon::parse($application->new_clock_in)->format('H:i')

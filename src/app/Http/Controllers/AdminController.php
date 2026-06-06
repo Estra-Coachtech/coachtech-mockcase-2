@@ -111,7 +111,7 @@ class AdminController extends Controller
             'application' => $attendanceRecords->application,
             'id' => $attendanceRecords->id,
             'year' => $attendanceRecords->date ? Carbon::parse($attendanceRecords->date)->format('Y年') : null,
-            'date' => $attendanceRecords->date ? Carbon::parse($attendanceRecords->date)->format('m月d日') : null,
+            'date' => $attendanceRecords->date ? Carbon::parse($attendanceRecords->date)->format('n月j日') : null,
             'clock_in' => $attendanceRecords->clock_in ? Carbon::parse($attendanceRecords->clock_in)->format('H:i') : null,
             'clock_out' => $attendanceRecords->clock_out ? Carbon::parse($attendanceRecords->clock_out)->format('H:i') : null,
             'breaks' => $breaks,

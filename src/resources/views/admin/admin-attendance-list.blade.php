@@ -51,10 +51,10 @@
                 <p class="table__description--item">{{ $attendance->clock_out ? Carbon\Carbon::parse($attendance->clock_out)->format('H:i') : '' }}</p>
             </td>
             <td class="table__description">
-                <p class="table__description--item">{{ $attendance->total_break_time ? Carbon\Carbon::parse($attendance->total_break_time)->format('H:i') : '' }}</p>
+                <p class="table__description--item">{{ $attendance->total_break_time ? Carbon\Carbon::parse($attendance->total_break_time)->format('G:i') : '' }}</p>
             </td>
             <td class="table__description">
-                <p class="table__description--item">{{ $attendance->total_time ? Carbon\Carbon::parse($attendance->total_time)->format('H:i') : '' }}</p>
+                <p class="table__description--item">{{ $attendance->total_time ? Carbon\Carbon::parse($attendance->total_time)->format('G:i') : '' }}</p>
             </td>
             <td class="table__description">
                 <a class="table__item--detail-link" href="{{ url('/attendance/' . $attendance['id']) }}">詳細</a>

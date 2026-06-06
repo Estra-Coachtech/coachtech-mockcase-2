@@ -22,7 +22,7 @@
                 <p class="applied-form__header">日付</p>
                 <div class="applied-form__input-group">
                     <input class="applied-form__input" type="text" value="{{ $application->new_date->format('Y年') }}" readonly>
-                    <input class="applied-form__input"  type="text"  value="{{ $application->new_date->format('m月d日') }}" readonly>
+                    <input class="applied-form__input"  type="text"  value="{{ $application->new_date->format('n月j日') }}" readonly>
                 </div>
             </div>
             <div class="applied-form__group">
@@ -33,10 +33,10 @@
                     <input class="applied-form__input" type="text" value="{{ $application->new_clock_out }}" readonly>
                 </div>
             </div>
-            {{-- 休憩は「休憩」「休憩1」「休憩2」…とセクションを分けて表示 --}}
+            {{-- 休憩は「休憩」「休憩2」「休憩3」…とセクションを分けて表示 --}}
             @foreach($application->proposalBreaks as $index => $break)
                 <div class="applied-form__group">
-                    <p class="applied-form__header">{{ $index === 0 ? '休憩' : '休憩' . $index }}</p>
+                    <p class="applied-form__header">{{ $index === 0 ? '休憩' : '休憩' . ($index + 1) }}</p>
                     <div class="applied-form__input-group">
                         <input class="applied-form__input readonly" type="text" name="new_break_in[]"
                             value="{{ \Carbon\Carbon::parse($break->break_in)->format('H:i') }}" readonly>
@@ -46,6 +46,15 @@
                     </div>
                 </div>
             @endforeach
+            {{-- Figma に合わせ、末尾に空の休憩スロットを1つ表示 --}}
+            <div class="applied-form__group">
+                <p class="applied-form__header">{{ $application->proposalBreaks->count() === 0 ? '休憩' : '休憩' . ($application->proposalBreaks->count() + 1) }}</p>
+                <div class="applied-form__input-group">
+                    <input class="applied-form__input readonly" type="text" value="" readonly>
+                    <p>〜</p>
+                    <input class="applied-form__input readonly" type="text" value="" readonly>
+                </div>
+            </div>
             <div class="applied-form__group">
                 <p class="applied-form__header">備考</p>
                 <div class="applied-form__input-group">

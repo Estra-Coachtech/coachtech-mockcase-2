@@ -52,7 +52,7 @@
                     {{-- 休憩は「休憩」「休憩1」「休憩2」…とセクションを分けて表示 --}}
                     @foreach($data['breaks'] as $index => $break)
                         <div class="form__group">
-                            <p class="form__header">{{ $index === 0 ? '休憩' : '休憩' . $index }}</p>
+                            <p class="form__header">{{ $index === 0 ? '休憩' : '休憩' . ($index + 1) }}</p>
                             <div class="form__input-group">
                                 <input class="form__input" type="text" name="new_break_in[]" value="{{ $break['break_in'] }}">
                                 <p>〜</p>
@@ -62,7 +62,7 @@
                     @endforeach
                     {{-- 新しい休憩を追加できるよう末尾に空欄を1つ用意 --}}
                     <div class="form__group">
-                        <p class="form__header">{{ count($data['breaks']) === 0 ? '休憩' : '休憩' . count($data['breaks']) }}</p>
+                        <p class="form__header">{{ count($data['breaks']) === 0 ? '休憩' : '休憩' . (count($data['breaks']) + 1) }}</p>
                         <div class="form__input-group">
                             <input class="form__input" type="text" name="new_break_in[]" value="">
                             <p>〜</p>
@@ -138,7 +138,7 @@
                     {{-- 休憩は「休憩」「休憩1」「休憩2」…とセクションを分けて表示 --}}
                     @foreach($data['breaks'] as $index => $break)
                         <div class="form__group">
-                            <p class="form__header">{{ $index === 0 ? '休憩' : '休憩' . $index }}</p>
+                            <p class="form__header">{{ $index === 0 ? '休憩' : '休憩' . ($index + 1) }}</p>
                             <div class="form__input-group">
                                 <input class="form__input readonly" type="text" name="new_break_in[]"
                                     value="{{ $break['break_in'] }}" readonly>

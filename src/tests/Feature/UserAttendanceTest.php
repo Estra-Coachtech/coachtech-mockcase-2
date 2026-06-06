@@ -124,6 +124,6 @@ class UserAttendanceTest extends TestCase
         $response = $this->get('/attendance/' . $attendanceRecord->id);
 
         $response->assertStatus(200);
-        $response->assertSee($attendanceRecord->date->format('m月d日'));
+        $response->assertSee($attendanceRecord->date->format('n月j日'));
     }
 }

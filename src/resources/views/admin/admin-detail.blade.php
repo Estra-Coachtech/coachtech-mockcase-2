@@ -58,7 +58,7 @@
                     @endphp
                     @foreach($breaks as $index => $break)
                         <div class="form__group">
-                            <p class="form__header">{{ $index === 0 ? '休憩' : '休憩' . $index }}</p>
+                            <p class="form__header">{{ $index === 0 ? '休憩' : '休憩' . ($index + 1) }}</p>
                             <div class="form__input-group">
                                 <input class="form__input" type="text" name="new_break_in[]"
                                     value="{{ $break['break_in'] ?? '' }}">
@@ -70,7 +70,7 @@
                     @endforeach
                     {{-- 新しい休憩を追加できるよう末尾に空欄を1つ用意 --}}
                     <div class="form__group">
-                        <p class="form__header">{{ count($breaks) === 0 ? '休憩' : '休憩' . count($breaks) }}</p>
+                        <p class="form__header">{{ count($breaks) === 0 ? '休憩' : '休憩' . (count($breaks) + 1) }}</p>
                         <div class="form__input-group">
                             <input class="form__input" type="text" name="new_break_in[]" value="">
                             <p>〜</p>
