@@ -15,6 +15,8 @@ class UserController extends Controller
 {
     /**
      * 勤怠打刻画面を表示する。
+     *
+     * @return View  勤怠打刻画面のビュー
      */
     public function index(): View
     {
@@ -48,6 +50,9 @@ class UserController extends Controller
 
     /**
      * 出勤・退勤・休憩入・休憩戻の打刻を処理する。
+     *
+     * @param  Request  $request  打刻種別（action）を含むリクエスト
+     * @return RedirectResponse  勤怠打刻画面へのリダイレクト
      */
     public function attendance(Request $request): RedirectResponse
     {
@@ -133,6 +138,9 @@ class UserController extends Controller
 
     /**
      * ログインユーザーの月次勤怠一覧を表示する（当該月の全日付・勤怠がない日は空欄）。
+     *
+     * @param  Request  $request  対象月（date）を含むリクエスト
+     * @return View  月次勤怠一覧画面のビュー
      */
     public function list(Request $request): View
     {
@@ -174,6 +182,9 @@ class UserController extends Controller
 
     /**
      * 勤怠詳細画面を表示する。承認待ち申請がある場合はその内容を併せて渡す。
+     *
+     * @param  int  $id  対象の勤怠レコードID
+     * @return View  勤怠詳細画面のビュー
      */
     public function detail(int $id): View
     {
@@ -227,6 +238,10 @@ class UserController extends Controller
 
     /**
      * 勤怠の修正申請を作成する。
+     *
+     * @param  CorrectionRequest  $request  修正後の日付・出退勤・休憩・備考を含むリクエスト
+     * @param  int  $id  修正対象の勤怠レコードID
+     * @return RedirectResponse  修正申請一覧画面へのリダイレクト
      */
     public function amendmentApplication(CorrectionRequest $request, int $id): RedirectResponse
     {
@@ -262,6 +277,8 @@ class UserController extends Controller
 
     /**
      * ログインユーザーの修正申請一覧を表示する。
+     *
+     * @return View  修正申請一覧画面のビュー
      */
     public function applicationList(): View
     {
@@ -293,6 +310,9 @@ class UserController extends Controller
 
     /**
      * 修正申請の詳細画面を表示する。
+     *
+     * @param  int  $id  対象の修正申請ID
+     * @return View  修正申請詳細画面のビュー
      */
     public function applicationDetail(int $id): View
     {

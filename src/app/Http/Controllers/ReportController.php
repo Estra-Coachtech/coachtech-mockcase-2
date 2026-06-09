@@ -80,19 +80,19 @@ class ReportController extends Controller
     private function buildStats(Collection $records): Collection
     {
         return $records
-            ->map(function (AttendanceRecord $r): array {
-                $dateStr = $r->date instanceof \DateTimeInterface
-                    ? $r->date->format('Y-m-d')
-                    : (string) $r->date;
+            ->map(function (AttendanceRecord $record): array {
+                $dateStr = $record->date instanceof \DateTimeInterface
+                    ? $record->date->format('Y-m-d')
+                    : (string) $record->date;
 
-                $clockInStr = $this->toTimeString($r->clock_in);
-                $clockOutStr = $this->toTimeString($r->clock_out);
+                $clockInStr = $this->toTimeString($record->clock_in);
+                $clockOutStr = $this->toTimeString($record->clock_out);
 
                 $clockIn = Carbon::parse($dateStr.' '.$clockInStr);
                 $clockOut = Carbon::parse($dateStr.' '.$clockOutStr);
                 $grossMinutes = $clockOut->diffInMinutes($clockIn);
 
-                $breakMinutes = $r->breaks
+                $breakMinutes = $record->breaks
                     ->filter(fn ($break) => $break->break_out !== null)
                     ->reduce(function (int $carry, $break) use ($dateStr): int {
                         $breakIn = Carbon::parse($dateStr.' '.$this->toTimeString($break->break_in));
@@ -143,7 +143,7 @@ class ReportController extends Controller
             ->map(fn (int $i) => Carbon::now()->subMonths($i)->format('Y-m'))
             ->map(function (string $month) use ($stats): array {
                 $monthStats = $stats->filter(
-                    fn (array $s): bool => $s['date']->format('Y-m') === $month
+                    fn (array $dailyStat): bool => $dailyStat['date']->format('Y-m') === $month
                 );
 
                 return [
@@ -165,18 +165,18 @@ class ReportController extends Controller
         $thisMonth = Carbon::now()->format('Y-m');
 
         $thisMonthStats = $stats->filter(
-            fn (array $s): bool => $s['date']->format('Y-m') === $thisMonth
+            fn (array $dailyStat): bool => $dailyStat['date']->format('Y-m') === $thisMonth
         );
 
         return [
             'late_count' => $thisMonthStats
-                ->filter(fn (array $s): bool => $s['clock_in'] > self::WORK_START)
+                ->filter(fn (array $dailyStat): bool => $dailyStat['clock_in'] > self::WORK_START)
                 ->count(),
             'early_leave_count' => $thisMonthStats
-                ->filter(fn (array $s): bool => $s['clock_out'] !== '' && $s['clock_out'] < self::WORK_END)
+                ->filter(fn (array $dailyStat): bool => $dailyStat['clock_out'] !== '' && $dailyStat['clock_out'] < self::WORK_END)
                 ->count(),
             'long_work_count' => $thisMonthStats
-                ->filter(fn (array $s): bool => $s['work_minutes'] > self::LONG_WORK_THRESHOLD_MINUTES)
+                ->filter(fn (array $dailyStat): bool => $dailyStat['work_minutes'] > self::LONG_WORK_THRESHOLD_MINUTES)
                 ->count(),
         ];
     }

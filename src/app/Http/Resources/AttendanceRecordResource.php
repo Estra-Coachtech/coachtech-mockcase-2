@@ -22,7 +22,9 @@ class AttendanceRecordResource extends JsonResource
         return [
             'id' => $this->id,
             'user_id' => $this->user_id,
-            'user' => new UserResource($this->whenLoaded('user')),
+            // API 仕様書／模範解答に合わせ、user 情報はネストオブジェクトではなく
+            // user_name のフラットな文字列フィールドで返す
+            'user_name' => $this->user?->name,
             'date' => $this->date instanceof \DateTimeInterface
                 ? $this->date->format('Y-m-d')
                 : $this->date,

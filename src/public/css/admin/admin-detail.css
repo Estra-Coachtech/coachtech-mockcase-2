@@ -88,7 +88,8 @@
     resize: none;
 }
 
-.form__input--name {
+.form__input--name,
+.form__input--date {
     border: none;
     outline: none;
 }
@@ -216,14 +217,6 @@
 }
 
 /* ───────────────────────────────────────────────────────────────── */
-/* 休憩行のみ縦積み設定 */
-.form__break-group .form__input-wrapper {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    width: 100%;
-}
-
 /* 「〜」の余白を調整 */
 .form__input-group p {
     margin: 0;

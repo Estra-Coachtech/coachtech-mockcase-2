@@ -7,6 +7,19 @@
     padding-top: 150px;
 }
 
+/* 見出し階層を h1 から開始するための見出し。Figma にタイトル表示が無いため視覚的には隠す */
+.attendance__heading {
+    border: 0;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    white-space: nowrap;
+    width: 1px;
+}
+
 .attendance__status,
 .attendance__form {
     text-align: center;
@@ -75,7 +88,7 @@
 
 .attendance__button--submit--break-in {
     background: #fff;
-    border: 1px solid #000;
+    border: none;
     border-radius: 20px;
     color: #000;
     font-size: 20px;
@@ -87,7 +100,7 @@
 
 .attendance__button--submit--break-out {
     background: #fff;
-    border: 1px solid #000;
+    border: none;
     border-radius: 20px;
     color: #000;
     font-size: 20px;

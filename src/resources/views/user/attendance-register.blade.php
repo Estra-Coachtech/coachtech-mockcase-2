@@ -6,6 +6,8 @@
 
 @section('content')
 <div class="attendance__content">
+    {{-- 見出し階層を h1 から開始するためのページ見出し（Figmaに表示タイトルが無いため視覚的には非表示） --}}
+    <h1 class="attendance__heading">勤怠登録</h1>
     <div class="attendance__status">
         <p class="attendance__status--item">{{ $user->attendance_status }}</p>
     </div>

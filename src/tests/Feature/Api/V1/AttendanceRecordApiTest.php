@@ -43,7 +43,7 @@ class AttendanceRecordApiTest extends TestCase
         $response->assertOk()
             ->assertJsonStructure([
                 'data' => [
-                    '*' => ['id', 'user_id', 'date', 'clock_in', 'clock_out'],
+                    '*' => ['id', 'user_id', 'user_name', 'date', 'clock_in', 'clock_out'],
                 ],
                 'meta' => ['current_page', 'last_page', 'per_page', 'total'],
             ])
@@ -99,12 +99,11 @@ class AttendanceRecordApiTest extends TestCase
 
         $response->assertOk()
             ->assertJsonPath('data.id', $record->id)
-            ->assertJsonPath('data.user.id', $user->id)
+            // user はネストオブジェクトではなく user_name フラットフィールドで返す（API仕様準拠）
+            ->assertJsonPath('data.user_name', $user->name)
             // 時刻は H:i:s 文字列で返る
             ->assertJsonPath('data.clock_in', '09:00:00')
-            ->assertJsonPath('data.clock_out', '18:00:00')
-            // user には email を含めず id / name のみ返す
-            ->assertJsonPath('data.user', ['id' => $user->id, 'name' => $user->name]);
+            ->assertJsonPath('data.clock_out', '18:00:00');
     }
 
     /** @test */

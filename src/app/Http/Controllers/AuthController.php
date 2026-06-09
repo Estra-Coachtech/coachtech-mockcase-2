@@ -15,6 +15,11 @@ class AuthController extends Controller
 {
     protected CreateNewUser $creator;
 
+    /**
+     * 依存するユーザー作成アクションを注入する。
+     *
+     * @param  CreateNewUser  $creator  ユーザー作成処理を担う Fortify アクション
+     */
     public function __construct(CreateNewUser $creator)
     {
         $this->creator = $creator;
@@ -22,6 +27,8 @@ class AuthController extends Controller
 
     /**
      * 管理者ログイン画面を表示する。
+     *
+     * @return View  管理者ログイン画面のビュー
      */
     public function adminLogin(): View
     {
@@ -30,6 +37,9 @@ class AuthController extends Controller
 
     /**
      * 管理者ログインを実行する。管理者でなければログインさせない。
+     *
+     * @param  AdminLoginRequest  $request  メールアドレス・パスワードを含むログインリクエスト
+     * @return RedirectResponse  勤怠一覧へのリダイレクト、または認証失敗時の差し戻し
      */
     public function adminDoLogin(AdminLoginRequest $request): RedirectResponse
     {
@@ -52,6 +62,8 @@ class AuthController extends Controller
 
     /**
      * 管理者をログアウトする。
+     *
+     * @return RedirectResponse  管理者ログイン画面へのリダイレクト
      */
     public function adminLogout(): RedirectResponse
     {
@@ -61,6 +73,9 @@ class AuthController extends Controller
 
     /**
      * 会員登録を行い、認証メールを送信したうえでメール認証誘導画面へ遷移する。
+     *
+     * @param  RegisterRequest  $request  名前・メールアドレス・パスワードを含む登録リクエスト
+     * @return RedirectResponse  メール認証誘導画面へのリダイレクト
      */
     public function store(RegisterRequest $request): RedirectResponse
     {
@@ -75,6 +90,9 @@ class AuthController extends Controller
 
     /**
      * 一般ユーザーのログインを実行する。メール未認証の場合はログインさせず認証メールを再送する。
+     *
+     * @param  LoginRequest  $request  メールアドレス・パスワードを含むログインリクエスト
+     * @return RedirectResponse  勤怠打刻画面へのリダイレクト、または認証失敗時の差し戻し
      */
     public function doLogin(LoginRequest $request): RedirectResponse
     {
@@ -100,6 +118,8 @@ class AuthController extends Controller
 
     /**
      * 一般ユーザーをログアウトする。
+     *
+     * @return RedirectResponse  ログイン画面へのリダイレクト
      */
     public function doLogout(): RedirectResponse
     {
@@ -109,6 +129,9 @@ class AuthController extends Controller
 
     /**
      * 指定ユーザーへメール認証通知を送信する。
+     *
+     * @param  User  $user  認証メールの送信先ユーザー
+     * @return void
      */
     protected function sendVerificationEmail(User $user): void
     {

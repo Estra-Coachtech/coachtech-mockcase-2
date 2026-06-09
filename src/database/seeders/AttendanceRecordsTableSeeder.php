@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\AttendanceBreak;
-use App\Models\AttendanceRecord;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;

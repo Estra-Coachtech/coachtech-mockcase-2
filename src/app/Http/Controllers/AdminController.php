@@ -15,6 +15,9 @@ class AdminController extends Controller
 {
     /**
      * 指定日の全ユーザーの勤怠一覧を表示する。
+     *
+     * @param  Request  $request  日付（date）を含むリクエスト
+     * @return View  勤怠一覧画面のビュー
      */
     public function list(Request $request): View
     {
@@ -34,6 +37,8 @@ class AdminController extends Controller
 
     /**
      * スタッフ（一般ユーザー）一覧を表示する。
+     *
+     * @return View  スタッフ一覧画面のビュー
      */
     public function staffList(): View
     {
@@ -45,6 +50,10 @@ class AdminController extends Controller
 
     /**
      * 指定スタッフの月次勤怠一覧を表示する（当該月の全日付・勤怠がない日は空欄）。
+     *
+     * @param  Request  $request  対象月（date）を含むリクエスト
+     * @param  int  $id  対象スタッフのユーザーID
+     * @return View  スタッフ別月次勤怠一覧画面のビュー
      */
     public function staffDetailList(Request $request, int $id): View
     {
@@ -90,6 +99,9 @@ class AdminController extends Controller
 
     /**
      * 管理者向けの勤怠詳細画面を表示する。
+     *
+     * @param  int  $id  対象の勤怠レコードID
+     * @return View  勤怠詳細画面のビュー
      */
     public function detail(int $id): View
     {
@@ -123,6 +135,10 @@ class AdminController extends Controller
 
     /**
      * 管理者が勤怠を直接修正する。
+     *
+     * @param  CorrectionRequest  $request  修正後の日付・出退勤・休憩・備考を含むリクエスト
+     * @param  int  $id  対象の勤怠レコードID
+     * @return View  修正後の勤怠詳細画面のビュー
      */
     public function amendmentApplication(CorrectionRequest $request, int $id): View
     {
@@ -180,6 +196,8 @@ class AdminController extends Controller
 
     /**
      * 修正申請一覧（全ユーザー）を表示する。
+     *
+     * @return View  修正申請一覧画面のビュー
      */
     public function applicationList(): View
     {
@@ -190,6 +208,9 @@ class AdminController extends Controller
 
     /**
      * 修正申請の承認画面を表示する。
+     *
+     * @param  int  $id  対象の修正申請ID
+     * @return View  修正申請の承認画面のビュー
      */
     public function approvalShow(int $id): View
     {
@@ -207,6 +228,10 @@ class AdminController extends Controller
 
     /**
      * 修正申請を承認し、申請内容を勤怠へ反映する。
+     *
+     * @param  Request  $request  リクエスト（承認処理では未使用）
+     * @param  int  $id  対象の修正申請ID
+     * @return View  修正申請一覧画面のビュー
      */
     public function approval(Request $request, int $id): View
     {
@@ -261,6 +286,9 @@ class AdminController extends Controller
 
     /**
      * 指定スタッフ・月の勤怠を CSV で出力する。
+     *
+     * @param  Request  $request  対象ユーザーID（user_id）と対象月（year_month）を含むリクエスト
+     * @return Response  CSV ファイルのダウンロードレスポンス
      */
     public function export(Request $request): Response
     {
