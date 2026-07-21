@@ -1,29 +1,83 @@
-# coachtech-mockcase-2
+# coachtech-mockcase-2（勤怠管理アプリ / 模範解答）
+
+勤怠打刻・勤怠一覧・修正申請と承認・管理者機能・メール認証・公開API（Sanctum）を備えた勤怠管理アプリケーションです。
+
+## 使用技術
+
+- PHP 8.2
+- Laravel 10.x
+- MySQL 8.4
+- Laravel Sail（Docker）
+- Vite（アセットビルド）
+- Mailpit（メール受信確認）
 
 ## 環境構築
 
-Docker ビルド  
-1.git clone git@github.com:Estra-Coachtech/coachtech-mockcase-2.git  
-2.docker-compose up -d --build
+本プロジェクトは **Laravel Sail**（Docker）で構築します。ローカルに PHP / Composer が無くても構築できます。
 
-Lavaral 環境構築  
-1.docker-compose exec php bash  
-2.composer install  
-3.cp .env.example .env  
-4..env ファイルの変更
+### 1. リポジトリのクローン
 
-```
-　DB_HOSTをmysqlに変更
-　DB_DATABASEをlaravel_dbに変更
-　DB_USERNAMEをlaravel_userに変更
-　DB_PASSをlaravel_passに変更
-　MAIL_FROM_ADDRESSに送信元アドレスを設定
+```bash
+git clone git@github.com:Estra-Coachtech/coachtech-mockcase-2.git
+cd coachtech-mockcase-2
 ```
 
-5.php artisan key:generate  
-6.php artisan migrate  
-7.php artisan db:seed  
-8.php artisan test
+### 2. 環境変数ファイルの作成
+
+```bash
+cp .env.example .env
+```
+
+### 3. Composer 依存のインストール（Docker 経由）
+
+```bash
+docker run --rm \
+    -u "$(id -u):$(id -g)" \
+    -v "$(pwd):/var/www/html" \
+    -w /var/www/html \
+    laravelsail/php82-composer:latest \
+    composer install
+```
+
+### 4. Sail の起動
+
+```bash
+./vendor/bin/sail up -d
+```
+
+> 毎回 `./vendor/bin/sail` と打つ代わりに、エイリアスの設定を推奨します。
+> ```bash
+> alias sail='[ -f sail ] && bash sail || bash vendor/bin/sail'
+> ```
+
+### 5. アプリケーションキーの生成
+
+```bash
+sail artisan key:generate
+```
+
+### 6. マイグレーション & シーディング
+
+```bash
+sail artisan migrate --seed
+```
+
+### 7. フロントエンドアセットのビルド
+
+```bash
+sail npm install
+sail npm run build   # 開発中にホットリロードする場合は sail npm run dev
+```
+
+### 8. アクセス
+
+- アプリ：http://localhost
+
+## テスト実行
+
+```bash
+sail artisan test
+```
 
 ## テーブル仕様
 
@@ -171,16 +225,12 @@ erDiagram
 　 id：user3@example.com  
 　 pass：password
 
-## 使用技術
-
-・PHP 7.4.9  
-・Laravel 8.83.8  
-・MySQL 8.0.26  
-・nginx 1.21.1  
-・MailHog latest
-
 ## URL
 
 ・開発環境：http://localhost/  
 ・phpMyAdmin：http://localhost:8080/  
-・MailHog：http://localhost:8025/
+・Mailpit：http://localhost:8025/
+
+## 作成者
+
+COACHTECH（模範解答）
