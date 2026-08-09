@@ -2,11 +2,11 @@
 
 namespace Tests\Feature;
 
+use App\Models\AttendanceRecord;
+use App\Models\User;
+use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
-use App\Models\User;
-use App\Models\AttendanceRecord;
-use Database\Seeders\DatabaseSeeder;
 
 class AdminAttendanceDetailTest extends TestCase
 {
@@ -30,7 +30,7 @@ class AdminAttendanceDetailTest extends TestCase
 
         $response = $this->get('/admin/attendance/list');
 
-        $response = $this->get('/attendance/' . $attendanceRecord->id);
+        $response = $this->get('/attendance/'.$attendanceRecord->id);
 
         $response->assertStatus(200);
         $response->assertSee($user->name);
@@ -48,12 +48,12 @@ class AdminAttendanceDetailTest extends TestCase
 
         $response = $this->get('/admin/attendance');
 
-        $response = $this->get('/attendance/' . $attendanceRecord->id);
+        $response = $this->get('/attendance/'.$attendanceRecord->id);
 
-        $response = $this->post('/attendance/' . $attendanceRecord->id, [
+        $response = $this->post('/attendance/'.$attendanceRecord->id, [
             'new_clock_in' => '10:00',
             'new_clock_out' => '09:00',
-            'comment' => 'テストコメント'
+            'comment' => 'テストコメント',
         ]);
 
         $response->assertSessionHasErrors(['new_clock_out']);
@@ -72,14 +72,14 @@ class AdminAttendanceDetailTest extends TestCase
 
         $response = $this->get('/admin/attendance');
 
-        $response = $this->get('/admin/attendance/' . $attendanceRecord->id);
+        $response = $this->get('/admin/attendance/'.$attendanceRecord->id);
 
-        $response = $this->post('/attendance/' . $attendanceRecord->id, [
+        $response = $this->post('/attendance/'.$attendanceRecord->id, [
             'new_clock_in' => '09:00',
             'new_clock_out' => '15:00',
             'new_break_in' => ['16:00'],
             'new_break_out' => ['15:30'],
-            'comment' => 'Test comment'
+            'comment' => 'Test comment',
         ]);
 
         $response->assertSessionHasErrors(['new_break_in.0']);
@@ -98,14 +98,14 @@ class AdminAttendanceDetailTest extends TestCase
 
         $response = $this->get('/admin/attendance');
 
-        $response = $this->get('/admin/attendance/' . $attendanceRecord->id);
+        $response = $this->get('/admin/attendance/'.$attendanceRecord->id);
 
-        $response = $this->post('/attendance/' . $attendanceRecord->id, [
+        $response = $this->post('/attendance/'.$attendanceRecord->id, [
             'new_clock_in' => '09:00',
             'new_clock_out' => '15:00',
             'new_break_in' => ['10:00'],
             'new_break_out' => ['16:00'],
-            'comment' => 'Test comment'
+            'comment' => 'Test comment',
         ]);
 
         $response->assertSessionHasErrors(['new_break_out.0']);
@@ -124,17 +124,15 @@ class AdminAttendanceDetailTest extends TestCase
 
         $response = $this->get('/admin/attendance');
 
-        $response = $this->get('/admin/attendance/' . $attendanceRecord->id);
+        $response = $this->get('/admin/attendance/'.$attendanceRecord->id);
 
-        $response = $this->post('/attendance/' . $attendanceRecord->id, [
+        $response = $this->post('/attendance/'.$attendanceRecord->id, [
             'new_clock_in' => '9:00',
             'new_clock_out' => '15:00',
-            'comment' => ''
+            'comment' => '',
         ]);
 
         $response->assertSessionHasErrors(['comment']);
         $this->assertContains('備考を記入してください。', session('errors')->get('comment'));
     }
 }
-
-

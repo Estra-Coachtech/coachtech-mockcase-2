@@ -2,13 +2,13 @@
 
 namespace Tests\Feature;
 
+use App\Models\Application;
+use App\Models\AttendanceRecord;
+use App\Models\User;
+use Carbon\Carbon;
+use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
-use App\Models\User;
-use App\Models\AttendanceRecord;
-use Database\Seeders\DatabaseSeeder;
-use Carbon\Carbon;
-use App\Models\Application;
 
 class UserAttendanceCorrectionTest extends TestCase
 {
@@ -30,12 +30,12 @@ class UserAttendanceCorrectionTest extends TestCase
 
         $response = $this->get('/attendance');
 
-        $response = $this->get('/attendance/' . $attendanceRecord->id);
+        $response = $this->get('/attendance/'.$attendanceRecord->id);
 
-        $response = $this->post('/attendance/' . $attendanceRecord->id, [
+        $response = $this->post('/attendance/'.$attendanceRecord->id, [
             'new_clock_in' => '10:00',
             'new_clock_out' => '9:00',
-            'comment' => 'Test comment'
+            'comment' => 'Test comment',
         ]);
 
         $response->assertSessionHasErrors(['new_clock_out']);
@@ -52,14 +52,14 @@ class UserAttendanceCorrectionTest extends TestCase
 
         $response = $this->get('/attendance');
 
-        $response = $this->get('/attendance/' . $attendanceRecord->id);
+        $response = $this->get('/attendance/'.$attendanceRecord->id);
 
-        $response = $this->post('/attendance/' . $attendanceRecord->id, [
+        $response = $this->post('/attendance/'.$attendanceRecord->id, [
             'new_clock_in' => '9:00',
             'new_clock_out' => '15:00',
             'new_break_in' => ['16:00'],
             'new_break_out' => ['15:30'],
-            'comment' => 'Test comment'
+            'comment' => 'Test comment',
         ]);
 
         $response->assertSessionHasErrors(['new_break_in.0']);
@@ -76,14 +76,14 @@ class UserAttendanceCorrectionTest extends TestCase
 
         $response = $this->get('/attendance');
 
-        $response = $this->get('/attendance/' . $attendanceRecord->id);
+        $response = $this->get('/attendance/'.$attendanceRecord->id);
 
-        $response = $this->post('/attendance/' . $attendanceRecord->id, [
+        $response = $this->post('/attendance/'.$attendanceRecord->id, [
             'new_clock_in' => '9:00',
             'new_clock_out' => '15:00',
             'new_break_in' => ['10:00'],
             'new_break_out' => ['16:00'],
-            'comment' => 'Test comment'
+            'comment' => 'Test comment',
         ]);
 
         $response->assertSessionHasErrors(['new_break_out.0']);
@@ -100,12 +100,12 @@ class UserAttendanceCorrectionTest extends TestCase
 
         $response = $this->get('/attendance');
 
-        $response = $this->get('/attendance/' . $attendanceRecord->id);
+        $response = $this->get('/attendance/'.$attendanceRecord->id);
 
-        $response = $this->post('/attendance/' . $attendanceRecord->id, [
+        $response = $this->post('/attendance/'.$attendanceRecord->id, [
             'new_clock_in' => '9:00',
             'new_clock_out' => '15:00',
-            'comment' => ''
+            'comment' => '',
         ]);
 
         $response->assertSessionHasErrors(['comment']);
@@ -128,15 +128,15 @@ class UserAttendanceCorrectionTest extends TestCase
             'new_date' => now(),
             'new_clock_in' => '09:00',
             'new_clock_out' => '15:00',
-            'comment' => 'テストコメント' ,
+            'comment' => 'テストコメント',
             'approval_status' => '承認待ち',
-    ]);
+        ]);
 
         $response = $this->get('/attendance');
 
-        $response = $this->get('/attendance/' . $attendanceRecord->id);
+        $response = $this->get('/attendance/'.$attendanceRecord->id);
 
-        $response = $this->post('/attendance/' . $attendanceRecord->id, [
+        $response = $this->post('/attendance/'.$attendanceRecord->id, [
             'new_clock_in' => '9:00',
             'new_clock_out' => '15:00',
             'comment' => 'テストコメント',
@@ -144,7 +144,7 @@ class UserAttendanceCorrectionTest extends TestCase
 
         $this->actingAs($admin);
 
-        $response = $this->get('/stamp_correction_request/approve/' . $application->id);
+        $response = $this->get('/stamp_correction_request/approve/'.$application->id);
         $response->assertStatus(200);
         $response->assertSee($user->name);
 
@@ -165,7 +165,7 @@ class UserAttendanceCorrectionTest extends TestCase
         $this->assertCount(2, $records);
 
         foreach ($records as $i => $record) {
-            $this->post('/attendance/' . $record->id, [
+            $this->post('/attendance/'.$record->id, [
                 'new_date' => Carbon::parse($record->date)->format('n月j日'),
                 'new_clock_in' => '09:00',
                 'new_clock_out' => '18:00',
@@ -203,10 +203,10 @@ class UserAttendanceCorrectionTest extends TestCase
             'new_clock_in' => '09:00',
             'new_clock_out' => '15:00',
             'comment' => 'テストコメント',
-            'approval_status' => '承認待ち'
+            'approval_status' => '承認待ち',
         ]);
 
-        $this->post('/attendance/' . $attendanceRecord->id, [
+        $this->post('/attendance/'.$attendanceRecord->id, [
             'new_clock_in' => '09:00',
             'new_clock_out' => '15:00',
             'comment' => 'テストコメント',
@@ -233,14 +233,14 @@ class UserAttendanceCorrectionTest extends TestCase
 
         $attendanceRecord = AttendanceRecord::where('user_id', $user->id)->first();
 
-        $response = $this->post('/attendance/' . $attendanceRecord->id, [
+        $response = $this->post('/attendance/'.$attendanceRecord->id, [
             'new_clock_in' => '9:00',
             'new_clock_out' => '15:00',
             'comment' => 'テストコメント',
         ]);
 
         $response = $this->get('/stamp_correction_request/list');
-        $response = $this->get('attendance/' . $attendanceRecord->id);
+        $response = $this->get('attendance/'.$attendanceRecord->id);
 
         $response->assertStatus(200);
     }

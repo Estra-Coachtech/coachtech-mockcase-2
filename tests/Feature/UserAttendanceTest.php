@@ -2,11 +2,11 @@
 
 namespace Tests\Feature;
 
+use App\Models\AttendanceRecord;
+use App\Models\User;
+use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
-use App\Models\User;
-use App\Models\AttendanceRecord;
-use Database\Seeders\DatabaseSeeder;
 
 class UserAttendanceTest extends TestCase
 {
@@ -82,7 +82,7 @@ class UserAttendanceTest extends TestCase
         ]);
 
         // 「前月」ボタン押下に相当：前月を指定して遷移する
-        $response = $this->get('/attendance/list?date=' . $previousMonth->format('Y-m-d'));
+        $response = $this->get('/attendance/list?date='.$previousMonth->format('Y-m-d'));
 
         $response->assertStatus(200);
         $response->assertSee($previousMonth->format('Y/m'));
@@ -104,7 +104,7 @@ class UserAttendanceTest extends TestCase
         ]);
 
         // 「翌月」ボタン押下に相当：翌月を指定して遷移する
-        $response = $this->get('/attendance/list?date=' . $nextMonth->format('Y-m-d'));
+        $response = $this->get('/attendance/list?date='.$nextMonth->format('Y-m-d'));
 
         $response->assertStatus(200);
         $response->assertSee($nextMonth->format('Y/m'));
@@ -121,7 +121,7 @@ class UserAttendanceTest extends TestCase
 
         $response = $this->get('/attendance');
 
-        $response = $this->get('/attendance/' . $attendanceRecord->id);
+        $response = $this->get('/attendance/'.$attendanceRecord->id);
 
         $response->assertStatus(200);
         $response->assertSee($attendanceRecord->date->format('n月j日'));

@@ -17,7 +17,7 @@ class AdminController extends Controller
      * 指定日の全ユーザーの勤怠一覧を表示する。
      *
      * @param  Request  $request  日付（date）を含むリクエスト
-     * @return View  勤怠一覧画面のビュー
+     * @return View 勤怠一覧画面のビュー
      */
     public function list(Request $request): View
     {
@@ -38,7 +38,7 @@ class AdminController extends Controller
     /**
      * スタッフ（一般ユーザー）一覧を表示する。
      *
-     * @return View  スタッフ一覧画面のビュー
+     * @return View スタッフ一覧画面のビュー
      */
     public function staffList(): View
     {
@@ -53,7 +53,7 @@ class AdminController extends Controller
      *
      * @param  Request  $request  対象月（date）を含むリクエスト
      * @param  int  $id  対象スタッフのユーザーID
-     * @return View  スタッフ別月次勤怠一覧画面のビュー
+     * @return View スタッフ別月次勤怠一覧画面のビュー
      */
     public function staffDetailList(Request $request, int $id): View
     {
@@ -77,7 +77,7 @@ class AdminController extends Controller
             $record = $records->get($day->format('Y-m-d'));
             $formattedAttendanceRecords->push([
                 'id' => $record?->id,
-                'date' => $day->format('m/d') . "({$weekdays[$day->dayOfWeek]})",
+                'date' => $day->format('m/d')."({$weekdays[$day->dayOfWeek]})",
                 'clock_in' => $record?->clock_in ? Carbon::parse($record->clock_in)->format('H:i') : null,
                 'clock_out' => $record?->clock_out ? Carbon::parse($record->clock_out)->format('H:i') : null,
                 'total_time' => $record?->total_time,
@@ -92,7 +92,7 @@ class AdminController extends Controller
                 'date' => $date,
                 'formattedAttendanceRecords' => $formattedAttendanceRecords,
                 'previousMonth' => $date->copy()->subMonth()->format('Y-m'),
-                'nextMonth' => $date->copy()->addMonth()->format('Y-m')
+                'nextMonth' => $date->copy()->addMonth()->format('Y-m'),
             ]
         );
     }
@@ -101,7 +101,7 @@ class AdminController extends Controller
      * 管理者向けの勤怠詳細画面を表示する。
      *
      * @param  int  $id  対象の勤怠レコードID
-     * @return View  勤怠詳細画面のビュー
+     * @return View 勤怠詳細画面のビュー
      */
     public function detail(int $id): View
     {
@@ -138,7 +138,7 @@ class AdminController extends Controller
      *
      * @param  CorrectionRequest  $request  修正後の日付・出退勤・休憩・備考を含むリクエスト
      * @param  int  $id  対象の勤怠レコードID
-     * @return View  修正後の勤怠詳細画面のビュー
+     * @return View 修正後の勤怠詳細画面のビュー
      */
     public function amendmentApplication(CorrectionRequest $request, int $id): View
     {
@@ -169,7 +169,7 @@ class AdminController extends Controller
         $totalBreakMinutes = 0;
 
         for ($i = 0; $i < count($breakIns); $i++) {
-            if (!empty($breakIns[$i]) && !empty($breakOuts[$i])) {
+            if (! empty($breakIns[$i]) && ! empty($breakOuts[$i])) {
                 $breakIn = Carbon::parse($breakIns[$i])->format('H:i');
                 $breakOut = Carbon::parse($breakOuts[$i])->format('H:i');
 
@@ -197,12 +197,13 @@ class AdminController extends Controller
     /**
      * 修正申請一覧（全ユーザー）を表示する。
      *
-     * @return View  修正申請一覧画面のビュー
+     * @return View 修正申請一覧画面のビュー
      */
     public function applicationList(): View
     {
         $user = User::all();
         $applications = Application::all();
+
         return view('admin/admin-application-list', compact('user', 'applications'));
     }
 
@@ -210,7 +211,7 @@ class AdminController extends Controller
      * 修正申請の承認画面を表示する。
      *
      * @param  int  $id  対象の修正申請ID
-     * @return View  修正申請の承認画面のビュー
+     * @return View 修正申請の承認画面のビュー
      */
     public function approvalShow(int $id): View
     {
@@ -231,7 +232,7 @@ class AdminController extends Controller
      *
      * @param  Request  $request  リクエスト（承認処理では未使用）
      * @param  int  $id  対象の修正申請ID
-     * @return View  修正申請一覧画面のビュー
+     * @return View 修正申請一覧画面のビュー
      */
     public function approval(Request $request, int $id): View
     {
@@ -239,7 +240,7 @@ class AdminController extends Controller
         $user = User::findOrFail($application->user_id);
         $attendanceRecord = AttendanceRecord::findOrFail($application->attendance_record_id);
 
-        $application->approval_status = "承認済み";
+        $application->approval_status = '承認済み';
         $application->save();
 
         $attendanceRecord->date = $application->new_date;
@@ -288,7 +289,7 @@ class AdminController extends Controller
      * 指定スタッフ・月の勤怠を CSV で出力する。
      *
      * @param  Request  $request  対象ユーザーID（user_id）と対象月（year_month）を含むリクエスト
-     * @return Response  CSV ファイルのダウンロードレスポンス
+     * @return Response CSV ファイルのダウンロードレスポンス
      */
     public function export(Request $request): Response
     {
@@ -307,7 +308,7 @@ class AdminController extends Controller
             '出勤時間',
             '退勤時間',
             '休憩時間',
-            '勤務時間'
+            '勤務時間',
         ];
         $temps = [];
         array_push($temps, $csvHeader);
@@ -318,7 +319,7 @@ class AdminController extends Controller
                 Carbon::parse($staff->clock_in)->format('H:i'),
                 Carbon::parse($staff->clock_out)->format('H:i'),
                 $staff->total_break_time,
-                $staff->total_time
+                $staff->total_time,
             ];
             array_push($temps, $temp);
         }
@@ -330,10 +331,11 @@ class AdminController extends Controller
         $csv = str_replace(PHP_EOL, "\r\n", stream_get_contents($stream));
         $csv = mb_convert_encoding($csv, 'SJIS-win', 'UTF-8');
         $filename = "{$userName}さんの勤怠リスト.csv";
-        $headers = array(
+        $headers = [
             'Content-Type' => 'text/csv',
-            'Content-Disposition' => 'attachment; filename=' . $filename,
-        );
+            'Content-Disposition' => 'attachment; filename='.$filename,
+        ];
+
         return response($csv, 200, $headers);
     }
 }

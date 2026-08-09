@@ -2,11 +2,11 @@
 
 namespace Tests\Feature;
 
+use App\Models\AttendanceRecord;
+use App\Models\User;
+use Database\Seeders\UsersTableSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
-use Database\Seeders\UsersTableSeeder;
-use App\Models\User;
-use App\Models\AttendanceRecord;
 
 class AttendanceTest extends TestCase
 {
@@ -31,7 +31,7 @@ class AttendanceTest extends TestCase
 
         $this->assertDatabaseHas('users', [
             'id' => $user->id,
-            'attendance_status' => '出勤中'
+            'attendance_status' => '出勤中',
         ]);
     }
 

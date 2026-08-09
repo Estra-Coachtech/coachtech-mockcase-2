@@ -1,15 +1,14 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\UserController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\UserController;
 use App\Http\Middleware\AdminStatusMiddleware;
-use Laravel\Fortify\Http\Controllers\VerifyEmailController;
-use Illuminate\Http\Request;
 use App\Http\Requests\CorrectionRequest;
-
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+use Laravel\Fortify\Http\Controllers\VerifyEmailController;
 
 /*
 |--------------------------------------------------------------------------
@@ -50,18 +49,21 @@ Route::middleware(['auth', AdminStatusMiddleware::class])->group(function () {
         if (auth()->user()->admin_status) {
             return app(AdminController::class)->applicationList();
         }
+
         return app(UserController::class)->applicationList();
     });
     Route::get('/attendance/{id}', function ($id, Request $request) {
         if (auth()->user()->admin_status) {
             return app(AdminController::class)->detail($id);
         }
+
         return app(UserController::class)->detail($id);
     });
     Route::post('/attendance/{id}', function (CorrectionRequest $request, $id) {
         if (auth()->user()->admin_status) {
             return app(AdminController::class)->amendmentApplication($request, $id);
         }
+
         return app(UserController::class)->amendmentApplication($request, $id);
     });
 });
@@ -82,5 +84,6 @@ Route::get('/email/verify/{id}/{hash}', [VerifyEmailController::class, '__invoke
 // 認証メールの再送（メール認証誘導画面の「再送する」ボタン）
 Route::post('/email/verification-notification', function (Request $request) {
     $request->user()->sendEmailVerificationNotification();
+
     return back()->with('message', '認証メールを再送しました。');
 })->middleware(['auth', 'throttle:6,1'])->name('verification.send');

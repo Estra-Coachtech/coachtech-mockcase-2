@@ -2,9 +2,9 @@
 
 namespace Tests\Feature;
 
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
-use App\Models\User;
 
 class AdminLoginTest extends TestCase
 {
@@ -20,11 +20,11 @@ class AdminLoginTest extends TestCase
 
         $response = $this->post('/admin/login', [
             'email' => '',
-            'password' => 'password123'
+            'password' => 'password123',
         ]);
 
         $response->assertSessionHasErrors(['email']);
-        $this->assertContains('メールアドレスを入力してください' , session()->get('errors')->get('email'));
+        $this->assertContains('メールアドレスを入力してください', session()->get('errors')->get('email'));
     }
 
     /** @test */
@@ -37,11 +37,11 @@ class AdminLoginTest extends TestCase
 
         $response = $this->post('/admin/login', [
             'email' => 'test@example.com',
-            'password' => ''
+            'password' => '',
         ]);
 
         $response->assertSessionHasErrors(['password']);
-        $this->assertContains('パスワードを入力してください' , session()->get('errors')->get('password'));
+        $this->assertContains('パスワードを入力してください', session()->get('errors')->get('password'));
     }
 
     /** @test */
@@ -54,7 +54,7 @@ class AdminLoginTest extends TestCase
 
         $response = $this->post('/admin/login', [
             'email' => 'test@example',
-            'password' => 'password123'
+            'password' => 'password123',
         ]);
 
         $response->assertSessionHasErrors(['email']);
@@ -62,4 +62,3 @@ class AdminLoginTest extends TestCase
         $this->assertContains('ログイン情報が登録されていません', $errors);
     }
 }
-

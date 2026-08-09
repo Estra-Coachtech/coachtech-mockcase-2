@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -22,7 +22,7 @@ class User extends Authenticatable
         'email',
         'password',
         'admin_status',
-        'attendance_status'
+        'attendance_status',
     ];
 
     /**
@@ -47,7 +47,7 @@ class User extends Authenticatable
     /**
      * このユーザーの勤怠レコード。
      */
-    public function attendanceRecords(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function attendanceRecords(): HasMany
     {
         return $this->hasMany(AttendanceRecord::class);
     }
@@ -55,7 +55,7 @@ class User extends Authenticatable
     /**
      * このユーザーが行った修正申請。
      */
-    public function applications(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function applications(): HasMany
     {
         return $this->hasMany(Application::class);
     }
