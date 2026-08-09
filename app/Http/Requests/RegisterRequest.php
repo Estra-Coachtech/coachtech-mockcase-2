@@ -8,8 +8,6 @@ class RegisterRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
-     *
-     * @return bool
      */
     public function authorize(): bool
     {
@@ -18,8 +16,6 @@ class RegisterRequest extends FormRequest
 
     /**
      * Get the validation rules that apply to the request.
-     *
-     * @return array
      */
     public function rules(): array
     {
@@ -27,7 +23,7 @@ class RegisterRequest extends FormRequest
             'name' => 'required',
             'email' => 'required|email',
             'password' => 'required|min:8|confirmed',
-            'password_confirmation' => 'required|min:8'
+            'password_confirmation' => 'required|min:8',
         ];
     }
 
@@ -41,7 +37,7 @@ class RegisterRequest extends FormRequest
             'password.min' => 'パスワードは8文字以上で入力してください',
             'password.confirmed' => 'パスワードと一致しません',
             'password_confirmation.required' => 'パスワードを入力してください',
-            'password_confirmation.min' => 'パスワードは8文字以上で入力してください'
+            'password_confirmation.min' => 'パスワードは8文字以上で入力してください',
         ];
     }
 }

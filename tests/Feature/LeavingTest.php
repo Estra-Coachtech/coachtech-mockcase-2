@@ -2,11 +2,11 @@
 
 namespace Tests\Feature;
 
+use App\Models\AttendanceRecord;
+use App\Models\User;
+use Database\Seeders\UsersTableSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
-use App\Models\User;
-use App\Models\AttendanceRecord;
-use Database\Seeders\UsersTableSeeder;
 
 class LeavingTest extends TestCase
 {

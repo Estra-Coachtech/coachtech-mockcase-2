@@ -2,12 +2,12 @@
 
 namespace Tests\Feature;
 
+use App\Models\AttendanceRecord;
+use App\Models\User;
+use Carbon\Carbon;
+use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
-use App\Models\User;
-use App\Models\AttendanceRecord;
-use Database\Seeders\DatabaseSeeder;
-use Carbon\Carbon;
 
 class UserInformationTest extends TestCase
 {
@@ -46,7 +46,7 @@ class UserInformationTest extends TestCase
         $attendanceRecords = AttendanceRecord::where('user_id', $user->id);
 
         $response = $this->get('/admin/staff/list');
-        $response = $this->get('/admin/attendance/staff/' . $user->id);
+        $response = $this->get('/admin/attendance/staff/'.$user->id);
 
         $response->assertStatus(200);
         foreach ($attendanceRecords as $record) {
@@ -70,7 +70,7 @@ class UserInformationTest extends TestCase
 
         $attendanceRecords = AttendanceRecord::whereDate('date', $previousMonth)->get();
 
-        $response = $this->get('/admin/attendance/list?date=' . $previousMonth->format('Y-m-d'));
+        $response = $this->get('/admin/attendance/list?date='.$previousMonth->format('Y-m-d'));
 
         foreach ($attendanceRecords as $record) {
             $response->assertSee($record->user->name);
@@ -94,7 +94,7 @@ class UserInformationTest extends TestCase
 
         $attendanceRecords = AttendanceRecord::whereDate('date', $nextMonth)->get();
 
-        $response = $this->get('/admin/attendance/list?date=' . $nextMonth->format('Y-m-d'));
+        $response = $this->get('/admin/attendance/list?date='.$nextMonth->format('Y-m-d'));
 
         foreach ($attendanceRecords as $record) {
             $response->assertSee($record->user->name);
@@ -112,13 +112,11 @@ class UserInformationTest extends TestCase
 
         $user = User::all()->random();
 
-        $response = $this->get('/admin/attendance/staff/' . $user->id);
+        $response = $this->get('/admin/attendance/staff/'.$user->id);
 
         $attendanceRecords = AttendanceRecord::all()->random();
 
-        $response = $this->get('/attendance/' . $attendanceRecords->id);
+        $response = $this->get('/attendance/'.$attendanceRecords->id);
         $response->assertStatus(200);
     }
 }
-
-

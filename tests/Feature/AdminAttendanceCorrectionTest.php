@@ -2,12 +2,13 @@
 
 namespace Tests\Feature;
 
+use App\Models\Application;
+use App\Models\AttendanceRecord;
+use App\Models\User;
+use Database\Seeders\DatabaseSeeder;
+use Faker\Factory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
-use App\Models\User;
-use App\Models\AttendanceRecord;
-use Database\Seeders\DatabaseSeeder;
-use App\Models\Application;
 
 class AdminAttendanceCorrectionTest extends TestCase
 {
@@ -28,7 +29,7 @@ class AdminAttendanceCorrectionTest extends TestCase
         $users = User::all();
         $applications = [];
 
-        $faker = \Faker\Factory::create();
+        $faker = Factory::create();
 
         foreach ($users as $user) {
             for ($i = 0; $i < 3; $i++) {
@@ -68,7 +69,7 @@ class AdminAttendanceCorrectionTest extends TestCase
         $users = User::all();
         $applications = [];
 
-        $faker = \Faker\Factory::create();
+        $faker = Factory::create();
 
         foreach ($users as $user) {
             for ($i = 0; $i < 3; $i++) {
@@ -123,10 +124,10 @@ class AdminAttendanceCorrectionTest extends TestCase
             'new_clock_out' => '12:00',
             'attendance_record_id' => $attendanceRecord->id,
             'comment' => '修正理由テスト',
-            'application_date' => now()
+            'application_date' => now(),
         ]);
 
-        $response = $this->get('/stamp_correction_request/approve/' . $application->id);
+        $response = $this->get('/stamp_correction_request/approve/'.$application->id);
 
         $response->assertSee($application->new_clock_in);
         $response->assertSee($application->new_clock_out);
@@ -156,14 +157,13 @@ class AdminAttendanceCorrectionTest extends TestCase
             'new_clock_out' => '12:00',
             'attendance_record_id' => $attendanceRecord->id,
             'comment' => '修正理由テスト',
-            'application_date' => now()
+            'application_date' => now(),
         ]);
 
-        $response = $this->get('/stamp_correction_request/approve/' . $application->id);
-        $response = $this->post('/stamp_correction_request/approve/' . $application->id);
+        $response = $this->get('/stamp_correction_request/approve/'.$application->id);
+        $response = $this->post('/stamp_correction_request/approve/'.$application->id);
 
-
-        $response = $this->get('/attendance/' . $attendanceRecord->id);
+        $response = $this->get('/attendance/'.$attendanceRecord->id);
         $response->assertSee('10:00');
         $response->assertSee('12:00');
     }

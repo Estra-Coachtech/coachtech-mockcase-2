@@ -22,11 +22,11 @@ class AttendanceRecord extends Model
     ];
 
     protected $casts = [
-        'date'              => 'datetime',
-        'clock_in'          => 'datetime:H:i',
-        'clock_out'         => 'datetime:H:i',
-        'total_time'        => 'string',
-        'total_break_time'  => 'string',
+        'date' => 'datetime',
+        'clock_in' => 'datetime:H:i',
+        'clock_out' => 'datetime:H:i',
+        'total_time' => 'string',
+        'total_break_time' => 'string',
     ];
 
     /**

@@ -4,6 +4,7 @@ namespace Tests\Feature\Api\V1;
 
 use App\Models\AttendanceRecord;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
@@ -148,7 +149,7 @@ class AttendanceRecordApiTest extends TestCase
         $record = AttendanceRecord::where('user_id', $user->id)->latest('id')->first();
         $this->assertNotNull($record);
         $this->assertSame('2026-05-15', $record->date->format('Y-m-d'));
-        $this->assertSame('09:00', \Carbon\Carbon::parse($record->clock_in)->format('H:i'));
+        $this->assertSame('09:00', Carbon::parse($record->clock_in)->format('H:i'));
     }
 
     /** @test */

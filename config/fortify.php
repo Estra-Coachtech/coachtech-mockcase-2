@@ -158,7 +158,7 @@ return [
     ],
 
     'redirects' => [
-        'logout' => config('app.url'). '/login'
-    ]
+        'logout' => config('app.url').'/login',
+    ],
 
 ];

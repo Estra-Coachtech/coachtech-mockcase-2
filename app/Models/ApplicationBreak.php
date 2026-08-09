@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class ApplicationBreak extends Model
 {
     protected $table = 'application_breaks';
+
     protected $fillable = ['application_id', 'break_in', 'break_out'];
 
     /**

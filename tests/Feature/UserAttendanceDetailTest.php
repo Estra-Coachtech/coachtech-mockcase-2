@@ -2,11 +2,11 @@
 
 namespace Tests\Feature;
 
+use App\Models\AttendanceRecord;
+use Carbon\Carbon;
+use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
-use App\Models\AttendanceRecord;
-use Database\Seeders\DatabaseSeeder;
-use Carbon\Carbon;
 
 class UserAttendanceDetailTest extends TestCase
 {
@@ -28,7 +28,7 @@ class UserAttendanceDetailTest extends TestCase
 
         $response = $this->get('/attendance');
 
-        $response = $this->get('/attendance/' . $attendanceRecord->id);
+        $response = $this->get('/attendance/'.$attendanceRecord->id);
 
         $response->assertStatus(200);
         $response->assertSee($user->name);
@@ -44,7 +44,7 @@ class UserAttendanceDetailTest extends TestCase
 
         $response = $this->get('/attendance');
 
-        $response = $this->get('/attendance/' . $attendanceRecord->id);
+        $response = $this->get('/attendance/'.$attendanceRecord->id);
 
         $response->assertStatus(200);
         $response->assertSee($attendanceRecord->date->format('n月j日'));
@@ -60,7 +60,7 @@ class UserAttendanceDetailTest extends TestCase
 
         $response = $this->get('/attendance');
 
-        $response = $this->get('/attendance/' . $attendanceRecord->id);
+        $response = $this->get('/attendance/'.$attendanceRecord->id);
 
         $response->assertStatus(200);
         $response->assertSee(Carbon::parse($attendanceRecord->clock_in)->format('H:i'));
@@ -77,7 +77,7 @@ class UserAttendanceDetailTest extends TestCase
 
         $response = $this->get('/attendance');
 
-        $response = $this->get('/attendance/' . $attendanceRecord->id);
+        $response = $this->get('/attendance/'.$attendanceRecord->id);
 
         $response->assertStatus(200);
         $response->assertSee(Carbon::parse($attendanceRecord->breaks[0]->break_in)->format('H:i'));

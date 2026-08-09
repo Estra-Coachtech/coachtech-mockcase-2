@@ -19,7 +19,7 @@ class Application extends Model
         'new_date',
         'new_clock_in',
         'new_clock_out',
-        'comment'
+        'comment',
     ];
 
     /**

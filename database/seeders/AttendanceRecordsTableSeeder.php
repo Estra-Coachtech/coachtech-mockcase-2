@@ -42,9 +42,13 @@ class AttendanceRecordsTableSeeder extends Seeder
 {
     /** [clock_in, clock_out, comment] 形式のパターン定義 */
     private const PATTERN_NORMAL = ['09:00:00', '18:00:00', '通常勤務'];
+
     private const PATTERN_OVERTIME = ['09:00:00', '20:00:00', '残業'];
+
     private const PATTERN_LATE = ['09:30:00', '18:00:00', '遅刻'];
+
     private const PATTERN_EARLY_LEAVE = ['09:00:00', '17:00:00', '早退'];
+
     private const PATTERN_LONG_WORK = ['08:00:00', '21:00:00', '長時間労働'];
 
     public function run(): void

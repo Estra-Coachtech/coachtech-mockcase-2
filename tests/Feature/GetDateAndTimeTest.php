@@ -2,10 +2,10 @@
 
 namespace Tests\Feature;
 
+use App\Models\User;
+use Database\Seeders\UsersTableSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
-use Database\Seeders\UsersTableSeeder;
-use App\Models\User;
 
 class GetDateAndTimeTest extends TestCase
 {
@@ -25,7 +25,7 @@ class GetDateAndTimeTest extends TestCase
 
         $response = $this->get('/attendance');
 
-        $now = new \DateTime();
+        $now = new \DateTime;
         $week = [
             0 => '日',
             1 => '月',
@@ -37,7 +37,7 @@ class GetDateAndTimeTest extends TestCase
         ];
         $weekdayIndex = $now->format('w');
         $weekday = $week[$weekdayIndex];
-        $formattedDate = $now->format('Y年n月j日(' . $weekday . ')');
+        $formattedDate = $now->format('Y年n月j日('.$weekday.')');
         $formattedTime = $now->format('H:i');
 
         $response->assertSee($formattedDate);

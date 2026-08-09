@@ -20,7 +20,7 @@ class CertificationTest extends TestCase
         ]);
 
         $response->assertSessionHasErrors(['name']);
-        $this->assertContains('お名前を入力してください' , session()->get('errors')->get('name'));
+        $this->assertContains('お名前を入力してください', session()->get('errors')->get('name'));
     }
 
     /** @test */
@@ -34,7 +34,7 @@ class CertificationTest extends TestCase
         ]);
 
         $response->assertSessionHasErrors(['email']);
-        $this->assertContains('メールアドレスを入力してください' , session()->get('errors')->get('email'));
+        $this->assertContains('メールアドレスを入力してください', session()->get('errors')->get('email'));
     }
 
     /** @test */
@@ -48,7 +48,7 @@ class CertificationTest extends TestCase
         ]);
 
         $response->assertSessionHasErrors(['password']);
-        $this->assertContains('パスワードは8文字以上で入力してください' , session()->get('errors')->get('password'));
+        $this->assertContains('パスワードは8文字以上で入力してください', session()->get('errors')->get('password'));
     }
 
     /** @test */
@@ -62,7 +62,7 @@ class CertificationTest extends TestCase
         ]);
 
         $response->assertSessionHasErrors(['password']);
-        $this->assertContains('パスワードと一致しません' , session()->get('errors')->get('password'));
+        $this->assertContains('パスワードと一致しません', session()->get('errors')->get('password'));
     }
 
     /** @test */
@@ -76,7 +76,7 @@ class CertificationTest extends TestCase
         ]);
 
         $response->assertSessionHasErrors(['password']);
-        $this->assertContains('パスワードを入力してください' , session()->get('errors')->get('password'));
+        $this->assertContains('パスワードを入力してください', session()->get('errors')->get('password'));
     }
 
     /** @test */

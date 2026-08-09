@@ -2,12 +2,12 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
-use App\Models\User;
 use App\Models\AttendanceRecord;
+use App\Models\User;
 use Database\Seeders\DatabaseSeeder;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
+use Tests\TestCase;
 
 class AdminAttendanceTest extends TestCase
 {
@@ -63,7 +63,7 @@ class AdminAttendanceTest extends TestCase
 
         $attendanceRecords = AttendanceRecord::whereDate('date', $previousDay)->get();
 
-        $response = $this->get('/admin/attendance/list?date=' . $previousDay->format('Y-m-d'));
+        $response = $this->get('/admin/attendance/list?date='.$previousDay->format('Y-m-d'));
 
         foreach ($attendanceRecords as $record) {
             $response->assertSee($record->user->name);
@@ -86,7 +86,7 @@ class AdminAttendanceTest extends TestCase
 
         $attendanceRecords = AttendanceRecord::whereDate('date', $nextDay)->get();
 
-        $response = $this->get('/admin/attendance/list?date=' . $nextDay->format('Y-m-d'));
+        $response = $this->get('/admin/attendance/list?date='.$nextDay->format('Y-m-d'));
 
         foreach ($attendanceRecords as $record) {
             $response->assertSee($record->user->name);
